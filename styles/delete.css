@@ -1,0 +1,68 @@
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    color: #d32f2f;
+    margin-bottom: 20px;
+}
+
+.warning-box {
+    border: 2px solid #d32f2f;
+    background-color: #ffebee;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #b71c1c;
+    font-weight: bold;
+}
+
+.record-info p {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn {
+    padding: 10px 25px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btn.danger {
+    background-color: #d32f2f;
+    color: #fff;
+}
+
+.btn.danger:hover {
+    background-color: #b71c1c;
+}
+
+.btn.secondary {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.btn.secondary:hover {
+    background-color: #bdbdbd;
+}

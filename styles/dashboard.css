@@ -1,0 +1,159 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 220px;
+    background: #2c7be5;
+    min-height: 100vh;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.logout {
+    color: #ffdddd;
+}
+
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+.topbar {
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.card p {
+    font-size: 24px;
+    color: #2c7be5;
+    font-weight: bold;
+}
+
+.table-section {
+    background: white;
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.btn {
+    padding: 5px 10px;
+    background: #2c7be5;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.toggle-btn {
+    font-size: 22px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border: none;
+    background: #2c7be5;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar {
+    width: 220px;
+    background: #2c7be5;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    transition: width 0.3s ease;
+}
+.divider{
+    width: 80%;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+    padding: 20px 5px;
+}
+.sidebar.collapsed h2,
+.sidebar.collapsed ul li a {
+    display: none;
+}
+
+.main {
+    flex: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification {
+    position: relative;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+

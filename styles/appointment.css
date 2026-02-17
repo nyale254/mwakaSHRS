@@ -1,0 +1,216 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="datetime-local"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+form textarea {
+    resize: vertical;
+}
+
+form button.btn {
+    background-color: #0077cc;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button.btn:hover {
+    background-color: #005fa3;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.status.pending {
+    background-color: #f0ad4e; 
+}
+
+.status.confirmed {
+    background-color: #5cb85c; 
+}
+
+.status.rejected {
+    background-color: #d9534f; 
+}
+
+.notifications {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.notifications p {
+    margin: 0 0 5px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    form input, form textarea, form select {
+        font-size: 13px;
+    }
+    form button.btn {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    font-size: 14px;
+}
+
+thead {
+    background-color: #0d6efd; 
+    color: #ffffff;
+}
+
+thead th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+    background-color: #f5f8ff;
+}
+
+tbody td {
+    padding: 10px 12px;
+    color: #333333;
+}
+
+/* Status badges */
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status.approved {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.status.rejected {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-approve {
+    background-color: #198754;
+    color: #ffffff;
+}
+
+.btn-approve:hover {
+    background-color: #157347;
+}
+
+.btn-reject {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn-reject:hover {
+    background-color: #bb2d3b;
+}
+
+@media (max-width: 768px) {
+    table {
+        font-size: 13px;
+    }
+
+    thead th,
+    tbody td {
+        padding: 8px;
+    }
+}
+

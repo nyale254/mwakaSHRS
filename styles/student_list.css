@@ -1,0 +1,176 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    color: #1f2933;
+}
+
+.topbar {
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 16px 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.topbar h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.btn1,
+.btn2 {
+    padding: 8px 14px;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-left: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.btn1 {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.btn1:hover {
+    background-color: #1d4ed8;
+}
+
+.btn2 {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.btn2:hover {
+    background-color: #b91c1c;
+}
+
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-form input {
+    padding: 8px 12px;
+    width: 220px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+}
+
+
+.btn {
+    background-color: #2563eb;
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #1d4ed8;
+}
+
+.btn.reset {
+    background-color: #64748b;
+}
+
+.btn.reset:hover {
+    background-color: #475569;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.container p {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #1e293b;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 12px 14px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f1f5f9;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+table td {
+    font-size: 14px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8fafc;
+}
+
+table td .btn {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+table tr td[colspan] {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-form {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .filter-form input {
+        width: 100%;
+    }
+
+    table {
+        font-size: 13px;
+    }
+}

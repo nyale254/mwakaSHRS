@@ -1,0 +1,58 @@
+body {
+    background: #f4f6f8;
+    font-family: Arial, sans-serif;
+    padding: 30px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+th {
+    background: #2c3e50;
+    color: #fff;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background: #f1f1f1;
+}
+.filter-form {
+    margin-bottom: 20px;
+}
+
+.filter-form input,
+.filter-form button {
+    padding: 8px;
+    margin-right: 5px;
+}
+
+.filter-form button {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background: #27ae60;
+}
+
+.reset {
+    padding: 8px;
+    text-decoration: none;
+    color: #e74c3c;
+}
