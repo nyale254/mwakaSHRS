@@ -56,7 +56,7 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
             <li><a href="student_list.php">Students</a></li>
             <li><a href="appointment.php">Appointments</a></li>
             <li><a href="vaccination.php">Vaccination</a></li>
-            <li><a href="#">Treatment&Medications</a></li>
+            <li><a href="xamp.php">Treatment&Medications</a></li>
             <li><a href="report.php">Reports</a></li>
             <li><a href="../logout.php" class="logout">Logout</a></li>
         </ul>
