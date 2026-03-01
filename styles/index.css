@@ -9,28 +9,45 @@ body {
     color: white;
     padding: 20px;
     text-align: center;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
 }
 
 .nav {
     background: #1a68d1;
     padding: 10px;
-    text-align: center;
+    text-align: center; position: fixed;
+    top: 150px; 
+    width: 100%;
+    z-index: 999;
 }
 
 .nav a {
     color: white;
-    margin: 0 15px;
+    margin: 0 60px;
     text-decoration: none;
     font-weight: bold;
+    gap: 50px;  
 }
 
 .nav a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background-color: #174786;
+    border: 2px solid none;
+    border-radius: 3px;
+    padding: 5px;
+    box-shadow: #1a68d1;
+}
+.nav a:active{
+    background: blue;
+    color: orangered;
 }
 
 .content {
     padding: 40px;
     text-align: center;
+    padding-top: 200px;
 }
 
 .btn {
@@ -50,7 +67,7 @@ body {
     background: #222;
     color: white;
     text-align: center;
-    padding: 10px;
+    padding: 1px;
     position: fixed;
     width: 100%;
     bottom: 0;

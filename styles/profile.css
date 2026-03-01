@@ -29,6 +29,11 @@ body {
     text-decoration: none;
     margin-left: 15px;
 }
+.back_btn{
+    background: blue;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
 
 .logout {
     background: #dc2626;

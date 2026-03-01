@@ -25,7 +25,6 @@ if (!$student) {
     header("Location: ../index.php?error=student_not_found");
     exit();
 }
-
 $visits = $appointments = $treatments =  0; 
 
 $visitsQuery = mysqli_query(
@@ -38,9 +37,10 @@ if ($visitsQuery) {
     echo "Error in visits query: " . mysqli_error($conn);
 }
 
+$today = date('Y-m-d');
 $appointmentsQuery = mysqli_query(
     $conn,
-    "SELECT COUNT(*) total FROM appointments WHERE user_id = $student_id"
+    "SELECT COUNT(*) as total FROM appointments WHERE DATE(created_at) = '$today'"
 );
 if ($appointmentsQuery) {
     $appointments = mysqli_fetch_assoc($appointmentsQuery)['total'] ?? 0;
@@ -74,24 +74,29 @@ mysqli_stmt_close($stmt2);
             <header class="top-header">
                 <div class="header-left">
                     <h1 class="page-title">Dashboard</h1>
-                    <p class="page-subtitle">Welcome back,<?=htmlspecialchars($student['fullname']);?>
-                    ! Here's your health overview.</p>
+                    <p class="page-subtitle">Welcome <?= htmlspecialchars($student['fullname']) ?></p>
                 </div>
                 <div class="nav">
-                    <a href="profile.php">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f">
+                    <a href="dashboard.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
+                            <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/>
+                        </svg>
+                        Home
+                    </a>
+                    <a href='profile.php'>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f1e9e9">
                             <path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm296.5-343.5Q560-607 560-640t-23.5-56.5Q513-720 480-720t-56.5 23.5Q400-673 400-640t23.5 56.5Q447-560 480-560t56.5-23.5ZM480-640Zm0 400Z"/>
                         </svg>
                         My Profile
                     </a>
-                    <a href="appointment.php">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f">
+                    <a href="#" data-page="/Mwaka.SHRS.2/student/appointment.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f5f1f1">
                             <path d="M509-269q-29-29-29-71t29-71q29-29 71-29t71 29q29 29 29 71t-29 71q-29 29-71 29t-71-29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/>
                         </svg>
-                        Book Appointmentb
+                        Book Appointment
                     </a>
-                    <a href="../logout.php">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f">
+                    <a href="../logout.php" class="logout_btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#faf0f0">
                             <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
                         </svg>
                         Logout
@@ -100,7 +105,7 @@ mysqli_stmt_close($stmt2);
                 
                 <div class="header-right">
                     <div class="search-bar">
-                        <input type="text" id="searchInput" placeholder="Search students..." />
+                        <input type="text" id="searchInput" placeholder="Search ....." />
                         <button class="searchBtn" id="searchBtn">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f">
                                 <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
@@ -121,7 +126,7 @@ mysqli_stmt_close($stmt2);
                             ?>
                         </span>
                     </button>
-                    <div id="notifDropdown" class="notif-dropdown" style="display:none;">
+                    <div id="notifDropdown" class="notif-dropdown">
                         <h4>Notifications</h4>
                         <ul>
                             <?php
@@ -144,7 +149,7 @@ mysqli_stmt_close($stmt2);
 
         </section>
 
-        <section class="main_content">
+        <section class="main_content" id="mainContent">
             <section class="cards">
                 <div class="card">
                     <h3>My Visits</h3>
@@ -202,7 +207,7 @@ mysqli_stmt_close($stmt2);
                         <button class="btn-text" >View All</button>
                     </div>
                     <div class="card-content">
-                        <div id="schedule-list" class="schedule-list"></div>
+                        <div id="schedule-list" class="schedule-list"><?= $appointments ?></div>
                     </div>
                 </div>
 
@@ -230,7 +235,7 @@ mysqli_stmt_close($stmt2);
                     <h3 class="card-title">Quick Actions</h3>
                 </div>
                 <div class="quick-actions-grid">
-                    <a class="quick-action-btn"  href="appointment.php">
+                    <a class="quick-action-btn" href="#" data-page ="appointment.php" id="bkAp_btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2"/>
                             <line x1="16" y1="2" x2="16" y2="6"/>

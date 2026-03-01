@@ -77,9 +77,12 @@ if (isset($_POST["login"])) {
     <?php } ?>
 
     <form method="POST">
-        <input type="text" name="username" placeholder="Username" required >
-        <input type="password" name="password" placeholder="Password" required>
+        <label>Username:</label>
+        <input type="text" name="username" placeholder=" enter your username" required >
+        <label>Password:</label>
+        <input type="password" name="password" placeholder="Enter Password" required>
         <button type="submit" name="login" value="login">Login</button>
+        <a href="/Mwaka.SHRS.2/forgot_password.php" class='forget_btn'> Forgot your password </a>
     </form>
 </div>
 

@@ -107,7 +107,7 @@ while($row = mysqli_fetch_assoc($trendResult)){
             Health Records
         </a></li>
 
-        <li><a href="#">
+        <li><a href="#" class="nav-link" data-page="medications.php">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
                 <path d="M345-120q-94 0-159.5-65.5T120-345q0-45 17-86t49-73l270-270q32-32 73-49t86-17q94 0 159.5 65.5T840-615q0 45-17 86t-49 73L504-186q-32 32-73 49t-86 17Zm266-286 107-106q20-20 31-47t11-56q0-60-42.5-102.5T615-760q-29 0-56 11t-47 31L406-611l205 205ZM345-200q29 0 56-11t47-31l106-107-205-205-107 106q-20 20-31 47t-11 56q0 60 42.5 102.5T345-200Z"/>
             </svg>
@@ -138,93 +138,91 @@ while($row = mysqli_fetch_assoc($trendResult)){
 </div>
 
 <div class="main">
-
-<div class="topbar">
-    <div class="search">
-        <input type="text" id="searchBox" placeholder="Search students...">
-    </div>
-    <div class="profile">
-        <span><?= $_SESSION['fullname'] ?? 'Admin'; ?></span>
-        <a href="../logout.php" class="logoutBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
-            </svg>
-            Logout
-        </a>
-    </div>
-</div>
-
-<div class="content" id="main-content">
-<h1>Dashboard Overview</h1>
-
-<div class="cards">
-
-    <div class="card">
-        <h3>Total Students</h3>
-        <div class="number"><?= $totalStudents ?></div>
+    <div class="topbar">
+        <div class="search">
+            <input type="text" id="searchBox" placeholder="Search students...">
+        </div>
+        <div class="profile">
+            <span><?= $_SESSION['fullname'] ?? 'Admin'; ?></span>
+            <a href="../logout.php" class="logoutBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black">
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                </svg>
+                Logout
+            </a>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Health Records</h3>
-        <div class="number"><?= $totalRecords ?></div>
-    </div>
+    <div class="content" id="main-content">
+        <h1>Dashboard Overview</h1>
+        <div class="cards">
 
-    <div class="card">
-        <h3>Today's Appointments</h3>
-        <div class="number"><?= $totalAppointments ?></div>
-    </div>
-
-    <div class="card">
-        <h3>Critical Cases</h3>
-        <div class="number"><?= $totalCritical ?></div>
-    </div>
-
-</div>
-
-<div class="grid-2">
-
-    <div class="box">
-        <h2>Health Records Trend</h2>
-        <canvas id="trendChart"></canvas>
-    </div>
-
-    <div class="box">
-        <h2>Today's Appointments</h2>
-
-        <?php 
-        mysqli_data_seek($appointmentsResult, 0);
-        while($row = mysqli_fetch_assoc($appointmentsResult)): 
-        ?>
-            <div class="appointment">
-                <?= $row['full_name']; ?>
-                <span class="status <?= strtolower($row['status']); ?>">
-                    <?= $row['status']; ?>
-                </span>
-                <div class="time"><?= date("h:i A", strtotime($row['appointment_date'])); ?></div>
+            <div class="card">
+                <h3>Total Students</h3>
+                <div class="number"><?= $totalStudents ?></div>
             </div>
-        <?php endwhile; ?>
+
+            <div class="card">
+                <h3>Health Records</h3>
+                <div class="number"><?= $totalRecords ?></div>
+            </div>
+
+            <div class="card">
+                <h3>Today's Appointments</h3>
+                <div class="number"><?= $totalAppointments ?></div>
+            </div>
+
+            <div class="card">
+                <h3>Critical Cases</h3>
+                <div class="number"><?= $totalCritical ?></div>
+            </div>
+
+        </div>
+
+        <div class="grid-2">
+
+            <div class="box">
+                <h2>Health Records Trend</h2>
+                <canvas id="trendChart"></canvas>
+            </div>
+
+            <div class="box">
+                <h2>Today's Appointments</h2>
+
+                <?php 
+                mysqli_data_seek($appointmentsResult, 0);
+                while($row = mysqli_fetch_assoc($appointmentsResult)): 
+                ?>
+                    <div class="appointment">
+                        <?= $row['full_name']; ?>
+                        <span class="status <?= strtolower($row['status']); ?>">
+                            <?= $row['status']; ?>
+                        </span>
+                        <div class="time"><?= date("h:i A", strtotime($row['appointment_date'])); ?></div>
+                    </div>
+                <?php endwhile; ?>
+
+            </div>
+        </div>
+
+        <div class="box">
+            <h2>Recent Activities</h2>
+
+            <?php
+            $activityQuery = "SELECT * FROM visits ORDER BY created_at DESC LIMIT 5";
+            $activityResult = mysqli_query($conn, $activityQuery);
+
+            while($activity = mysqli_fetch_assoc($activityResult)):
+            ?>
+                <div class="activity">
+                    <?= $activity['reason']; ?>
+                    <div class="time"><?= date("h:i A", strtotime($activity['created_at'])); ?></div>
+                </div>
+            <?php endwhile; ?>
+
+        </div>
 
     </div>
-</div>
-
-<div class="box">
-<h2>Recent Activities</h2>
-
-<?php
-$activityQuery = "SELECT * FROM visits ORDER BY created_at DESC LIMIT 5";
-$activityResult = mysqli_query($conn, $activityQuery);
-
-while($activity = mysqli_fetch_assoc($activityResult)):
-?>
-    <div class="activity">
-        <?= $activity['reason']; ?>
-        <div class="time"><?= date("h:i A", strtotime($activity['created_at'])); ?></div>
-    </div>
-<?php endwhile; ?>
-
-</div>
-
-</div>
 </div>
 
 <script>
@@ -263,7 +261,6 @@ links.forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
 
-        // Remove active class from all links
         links.forEach(l => l.classList.remove('active'));
         this.classList.add('active');
 
@@ -274,9 +271,8 @@ links.forEach(link => {
             .then(html => {
                 content.innerHTML = html;
 
-                // Optional: re-initialize charts or JS inside the new content
                 if(page.includes('dashboard')) {
-                    initDashboardChart(); // define this in a function
+                    initDashboardChart(); // 
                 }
             })
             .catch(err => {
@@ -286,7 +282,6 @@ links.forEach(link => {
     });
 });
 
-// Example: wrap your existing chart code in a function
 function initDashboardChart() {
     const ctx = document.getElementById('trendChart')?.getContext('2d');
     if(!ctx) return;
@@ -311,7 +306,6 @@ function initDashboardChart() {
     });
 }
 
-// Initialize dashboard chart on first load
 initDashboardChart();
 
 </script>

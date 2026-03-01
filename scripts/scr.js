@@ -1,237 +1,207 @@
-// Tab functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tabs
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            // Add active class to current tab
-            this.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
+
+function loadPage(page) {
+    fetch(page)
+        .then(response => {
+            if (!response.ok) throw new Error("Page not found");
+            return response.text();
+        })
+        .then(data => {
+            const main = document.getElementById("mainContent");
+            if (!main) return;
+
+            main.innerHTML = data;
+
+            if (page.includes("appointment.php") && typeof initAppointmentPage === "function") {
+                initAppointmentPage();
+            }
+            if (page.includes("some_other_page.php") && typeof initOtherPage === "function") {
+                initOtherPage();
+            }
+
+            window.scrollTo(0, 0);
+        })
+        .catch(err => {
+            const main = document.getElementById("mainContent");
+            if (main) main.innerHTML = "<h3 style='color:red;'>Error loading page.</h3>";
+            console.error(err);
         });
+}
+
+function loadNotifications() {
+    const dropdownList = document.querySelector("#notifDropdown ul");
+    const pageBox = document.getElementById("notifications");
+    const badge = document.getElementById("notificationBadge");
+
+    if (!dropdownList || !pageBox || !badge) return;
+
+    fetch("/Mwaka.SHRS.2/student/fetch_notification.php")
+        .then(res => res.json())
+        .then(data => {
+            dropdownList.innerHTML = "";
+            pageBox.innerHTML = ""; 
+            let unreadCount = 0;
+
+            if (!Array.isArray(data) || data.length === 0) {
+                dropdownList.innerHTML = "<li>No notifications</li>";
+                pageBox.innerHTML = "<p>No notifications available.</p>";
+                badge.innerText = "0";
+                badge.style.display = "none";
+                return;
+            }
+
+            data.forEach(note => {
+                const status = parseInt(note.status);
+                if (status === 0) unreadCount++;
+                const time = note.created_at ? new Date(note.created_at).toLocaleString() : "";
+
+                dropdownList.innerHTML += `
+                    <li class="${status === 0 ? 'unread' : 'read'}" data-id="${note.notification_id}">
+                        ${note.message}
+                        <span class="time">${time}</span>
+                    </li>
+                `;
+
+                pageBox.innerHTML += `
+                    <div class="notification-item ${status === 0 ? 'unread' : 'read'}" data-id="${note.notification_id}">
+                        <p>${note.message}</p>
+                        <small>${time}</small>
+                    </div>
+                `;
+            });
+
+            badge.innerText = unreadCount;
+            badge.style.display = unreadCount > 0 ? "inline-block" : "none";
+        })
+        .catch(err => console.error("Error fetching notifications:", err));
+}
+function toggleNotifications() {
+    const dropdown = document.getElementById("notifDropdown");
+    const badge = document.getElementById("notificationBadge");
+    if (!dropdown) return;
+
+    dropdown.classList.toggle("show");
+
+    if (dropdown.classList.contains("show")) {
+        fetch("/Mwaka.SHRS.2/student/mark_notifications_read.php")
+            .then(res => res.json())
+            .then(() => {
+                if (badge) {
+                    badge.innerText = "0";
+                    badge.style.display = "none";
+                }
+                loadNotifications();
+            })
+            .catch(err => console.error("Error marking notifications:", err));
+    }
+}
+
+// ----------------------------
+// Appointments
+// ----------------------------
+function loadAppointments() {
+    const container = document.getElementById("appointmentsList");
+    if (!container) return;
+
+    fetch("/Mwaka.SHRS.2/student/fetch_appointment.php")
+        .then(res => res.json())
+        .then(data => {
+            let table = `
+                <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            if (!Array.isArray(data) || data.length === 0) {
+                table += `<tr><td colspan="4">No appointments found.</td></tr>`;
+            } else {
+                data.forEach(app => {
+                    const status = app.status || "Pending";
+                    const formattedDate = new Date(app.appointment_date).toLocaleString();
+
+                    table += `
+                        <tr>
+                            <td>${app.appointment_id}</td>
+                            <td>${formattedDate}</td>
+                            <td>${app.reason}</td>
+                            <td class="status ${app.status}">${app.status.charAt(0).toUpperCase() + app.status.slice(1)}</td>
+
+                        </tr>
+                    `;
+                });
+            }
+
+            table += `</tbody></table></div>`;
+            container.innerHTML = table;
+        })
+        .catch(err => console.error("Error fetching appointments:", err));
+}
+
+function initAppointmentPage() {
+    loadAppointments();
+    loadNotifications();
+
+    const form = document.getElementById("appointmentForm");
+    if (!form) return;
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch("/Mwaka.SHRS.2/student/submit_appointment.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.message) alert(data.message);
+            if (data.success) {
+                form.reset();
+                loadAppointments();
+            }
+        })
+        .catch(err => console.error("Error submitting appointment:", err));
     });
-    
-    // Modal functionality
-    const modal = document.getElementById('recordModal');
-    if (modal) {
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                closeModal();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const notifBtn = document.querySelector("[data-page='notifications']");
+    const dropdown = document.getElementById("notifDropdown");
+
+    if (notifBtn && dropdown) {
+        notifBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            toggleNotifications();
+        });
+
+        document.addEventListener("click", function(e) {
+            if (!dropdown.contains(e.target) && !notifBtn.contains(e.target)) {
+                dropdown.classList.remove("show");
             }
         });
     }
-});
 
-// Modal functions
-function openModal() {
-    const modal = document.getElementById('recordModal');
-    modal.classList.add('show');
-}
+    document.querySelectorAll("a[data-page]").forEach(link => {
+        link.addEventListener("click", function(e) {
+            e.preventDefault();
+            const page = this.getAttribute("data-page");
+            if (page) loadPage(page);
+        });
+    });
 
-function closeModal() {
-    const modal = document.getElementById('recordModal');
-    modal.classList.remove('show');
-    document.getElementById('recordForm').reset();
-}
+    loadNotifications();
+    loadAppointments();
 
-// Add record
-function addRecord(type, studentId) {
-    const modalTitle = document.getElementById('modalTitle');
-    const formFields = document.getElementById('formFields');
-    
-    modalTitle.textContent = 'Add ' + type.charAt(0).toUpperCase() + type.slice(1);
-    document.getElementById('recordType').value = type;
-    document.getElementById('recordId').value = '';
-    
-    // Generate form fields based on type
-    let fields = '';
-    
-    switch(type) {
-        case 'allergy':
-            fields = `
-                <div class="form-group">
-                    <label>Allergy Type</label>
-                    <select name="allergy_type" required>
-                        <option value="Food">Food</option>
-                        <option value="Medication">Medication</option>
-                        <option value="Environmental">Environmental</option>
-                        <option value="Insect">Insect</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Allergen</label>
-                    <input type="text" name="allergen" required>
-                </div>
-                <div class="form-group">
-                    <label>Severity</label>
-                    <select name="severity" required>
-                        <option value="Mild">Mild</option>
-                        <option value="Moderate">Moderate</option>
-                        <option value="Severe">Severe</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Reaction</label>
-                    <textarea name="reaction" rows="2"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea name="notes" rows="3"></textarea>
-                </div>
-            `;
-            break;
-            
-        case 'condition':
-            fields = `
-                <div class="form-group">
-                    <label>Condition Name</label>
-                    <input type="text" name="condition_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Diagnosis Date</label>
-                    <input type="date" name="diagnosis_date">
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="status" required>
-                        <option value="Active">Active</option>
-                        <option value="Resolved">Resolved</option>
-                        <option value="Ongoing">Ongoing</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea name="notes" rows="3"></textarea>
-                </div>
-            `;
-            break;
-            
-        case 'medication':
-            fields = `
-                <div class="form-group">
-                    <label>Medication Name</label>
-                    <input type="text" name="medication_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Dosage</label>
-                    <input type="text" name="dosage" placeholder="e.g., 10mg">
-                </div>
-                <div class="form-group">
-                    <label>Frequency</label>
-                    <input type="text" name="frequency" placeholder="e.g., Twice daily">
-                </div>
-                <div class="form-group">
-                    <label>Start Date</label>
-                    <input type="date" name="start_date">
-                </div>
-                <div class="form-group">
-                    <label>End Date</label>
-                    <input type="date" name="end_date">
-                </div>
-                <div class="form-group">
-                    <label>Prescribing Physician</label>
-                    <input type="text" name="prescribing_physician">
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea name="notes" rows="2"></textarea>
-                </div>
-            `;
-            break;
-            
-        case 'immunization':
-            fields = `
-                <div class="form-group">
-                    <label>Vaccine Name</label>
-                    <input type="text" name="vaccine_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Date Administered</label>
-                    <input type="date" name="date_administered" required>
-                </div>
-                <div class="form-group">
-                    <label>Administered By</label>
-                    <input type="text" name="administered_by">
-                </div>
-                <div class="form-group">
-                    <label>Lot Number</label>
-                    <input type="text" name="lot_number">
-                </div>
-                <div class="form-group">
-                    <label>Next Due Date</label>
-                    <input type="date" name="next_due_date">
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea name="notes" rows="2"></textarea>
-                </div>
-            `;
-            break;
-    }
-    
-    formFields.innerHTML = fields;
-    openModal();
-}
-
-// Edit record
-function editRecord(type, id) {
-    // In a real application, you would fetch the record data via AJAX
-    // and populate the form fields
-    console.log('Edit', type, id);
-    addRecord(type, document.getElementById('studentId').value);
-    document.getElementById('recordId').value = id;
-    
-    // Simulate loading data
-    setTimeout(() => {
-        // Populate fields with actual data from server
-        alert('In production, this would load the record data via AJAX');
-    }, 100);
-}
-
-// Delete record
-function deleteRecord(type, id) {
-    if (confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
-        // In a real application, you would send an AJAX request to delete the record
-        console.log('Delete', type, id);
-        alert('Record deleted successfully');
-        location.reload();
-    }
-}
-
-// Save record
-function saveRecord() {
-    const form = document.getElementById('recordForm');
-    const formData = new FormData(form);
-    
-    // In a real application, you would send this data via AJAX
-    console.log('Saving record:', Object.fromEntries(formData));
-    
-    // Show success message
-    alert('Record saved successfully');
-    closeModal();
-    location.reload();
-}
-
-// Search functionality
-function searchStudents() {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        const query = searchInput.value;
-        if (query.length > 2) {
-            // In production, implement AJAX search
-            console.log('Searching for:', query);
-        }
-    }
-}
-
-// Initialize tooltips and other UI elements
-document.addEventListener('DOMContentLoaded', function() {
-    // Add any additional initialization here
-    console.log('Student Health Record System initialized');
+    setInterval(() => {
+        loadNotifications();
+        if (document.getElementById("appointmentsList")) loadAppointments();
+    }, 5000);
 });

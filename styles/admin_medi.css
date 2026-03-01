@@ -1,0 +1,265 @@
+/* ========== GLOBAL ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+body {
+    background: #f4f7fb;
+    color: #2c3e50;
+}
+
+/* ========== DASHBOARD LAYOUT ========== */
+.dashboard {
+    padding: 2rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    background: #1e81c4;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.logo-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.badge {
+    background: #e6f2fb;
+    color: #1e81c4;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+.date-badge {
+    background: #ffffff;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    font-size: 0.9rem;
+}
+
+/* ========== STATS ========== */
+.stats-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    flex: 1;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    transition: 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    color: #1e81c4;
+    background: #e6f2fb;
+    padding: 0.8rem;
+    border-radius: 10px;
+}
+
+.stat-content h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #7a8fa6;
+}
+
+.number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-right: 0.3rem;
+}
+
+.unit {
+    font-size: 0.85rem;
+    color: #7a8fa6;
+}
+
+/* ========== GRID ========== */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+/* ========== CARD ========== */
+.card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+.card-header h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+/* ========== TABLE ========== */
+.med-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.med-table th {
+    text-align: left;
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #7a8fa6;
+    border-bottom: 1px solid #eee;
+}
+
+.med-table td {
+    padding: 0.9rem 0.8rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.med-table tr:hover {
+    background: #f8fbff;
+}
+
+/* Student Avatar */
+.student {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    background: #1e81c4;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+/* Status Badge */
+.status-badge {
+    background: #d4edda;
+    color: #1e7e34;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.status-badge.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Action Link */
+.action-link {
+    text-decoration: none;
+    color: #1e81c4;
+    font-weight: 500;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+/* ========== INVENTORY ALERT ========== */
+.inventory-alert {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.alert-left {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.alert-text strong {
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.alert-text p {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* ========== RIGHT PANEL ========== */
+.auth-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+.auth-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1e81c4;
+}
+
+.auth-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    color: #6c757d;
+}
+
+.doc-note {
+    background: #f8fbff;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+    .stats-row {
+        flex-direction: column;
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}

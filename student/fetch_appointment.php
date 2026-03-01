@@ -29,11 +29,12 @@ $result = mysqli_stmt_get_result($stmt);
 
 $appointments = [];
 while($row = mysqli_fetch_assoc($result)) {
+    $status = strtolower(trim($row['status'] ?? 'pending'));
     $appointments[] = [
         'appointment_id' => (int)$row['appointment_id'],
         'appointment_date' => $row['appointment_date'],
         'reason' => $row['reason'],
-        'status' => $row['status']
+        'status' => $status
     ];
 }
 

@@ -26,11 +26,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $student_id = intval($_GET['id']);
 
 $query = "
-SELECT s.student_id, s.full_name, s.reg_no, s.gender, s.course, s.DoB, m.blood_group
-FROM students s
-LEFT JOIN medical_records m ON s.student_id = m.student_id
-WHERE s.student_id = ?
-ORDER BY s.course DESC
+SELECT student_id, full_name, reg_no, gender, course, DoB, blood_type
+FROM students 
+WHERE student_id = ?
+ORDER BY course DESC
 ";
 
 $stmt = mysqli_prepare($conn, $query);
@@ -87,7 +86,7 @@ $visitResult = mysqli_stmt_get_result($visitStmt);
             <p><strong>Gender:</strong> <?= htmlspecialchars($student['gender']) ?></p>
             <p><strong>Course:</strong> <?= htmlspecialchars($student['course']) ?></p>
             <p><strong>Date of Birth:</strong> <?= htmlspecialchars($student['DoB']) ?></p>
-            <p><strong>Blood Group:</strong> <?= htmlspecialchars($student['blood_group']) ?></p>
+            <p><strong>Blood Group:</strong> <?= htmlspecialchars($student['blood_type']) ?></p>
 
             <br>
             <a href="treatment.php?id=<?= $student_id ?>" class="btn">Add Treatment</a>
