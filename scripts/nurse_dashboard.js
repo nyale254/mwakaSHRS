@@ -9,10 +9,6 @@ document.querySelectorAll(".clickable-row").forEach(row => {
     });
 });
 
-/*function toggleNotifications() {
-    const dropdown = document.getElementById("notificationDropdown");
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-}*/
 
 function toggleNotifications() {
     const dropdown = document.getElementById("notificationDropdown");
@@ -67,6 +63,10 @@ links.forEach(link => {
                 if(page.includes('dashboard')) {
                     initDashboardChart(); 
                 }
+
+                if(page.includes('treatment')){
+                    initTreatmentPage();
+                }
             })
             .catch(err => {
                 content.innerHTML = "<p>Error loading page.</p>";
@@ -114,18 +114,6 @@ function updateStatus(appointmentId, status, studentId) {
         else alert('Error: '+data.message);
     });
 }
-
-/*function fetchNotifications() {
-    fetch('fetch_notification.php')
-    .then(res => res.json())
-    .then(data => {
-        const container = document.getElementById('notifications');
-        container.innerHTML = '';
-        data.forEach(note => {
-            container.innerHTML += `<p>${note.message} <small>(${note.created_at})</small></p>`;
-        });
-    });
-}*/
 
 function loadNotifications() {
     const dropdownList = document.querySelector("#notificationDropdown ul");
@@ -178,3 +166,131 @@ function loadNotifications() {
 setInterval(fetchAppointments, 5000);
 fetchAppointments();
 
+// treatment.php js
+function initTreatmentPage(){
+
+const studentName = document.getElementById("student_name");
+const studentId = document.getElementById("student_id");
+const course = document.getElementById("course");
+const studentList = document.getElementById("studentList");
+
+if(!studentName) return; 
+
+studentName.addEventListener("keyup", function(){
+
+    let query = this.value;
+
+    if(query.length < 2){
+        studentList.innerHTML = "";
+        return;
+    }
+
+    fetch("search_student.php?name="+query)
+    .then(res => res.json())
+    .then(data => {
+        studentList.innerHTML = "";
+
+        data.forEach(student => {
+            let li = document.createElement("li");
+            li.className = "list-group-item list-group-item-action";
+            li.textContent = student.full_name + " ("+student.student_id+")";
+            li.dataset.id = student.student_id;
+            li.dataset.course = student.course;
+
+            li.addEventListener("click", function(){
+                studentName.value = student.full_name;
+                studentId.value = student.student_id;
+                course.value = student.course;
+                studentList.innerHTML = "";
+
+                loadHistory(student.student_id);
+            });
+
+            studentList.appendChild(li);
+        });
+    });
+
+});
+
+
+window.addRow = function(){
+    let table = document.querySelector("#prescriptionTable tbody");
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+    <td><input name="medication[]" class="form-control"></td>
+    <td><input name="prescribed_dosage[]" class="form-control"></td>
+    <td><input name="frequency[]" class="form-control"></td>
+    <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Remove</button></td>
+    `;
+
+    table.appendChild(row);
+}
+
+
+window.loadHistory = function(student_id){
+
+    fetch("get_history.php?id="+student_id)
+    .then(res=>res.json())
+    .then(data=>{
+        let table = document.querySelector("#historyTable tbody");
+        table.innerHTML="";
+
+        data.forEach(row=>{
+            table.innerHTML+=`
+            <tr>
+            <td>${row.created_at}</td>
+            <td>${row.diagnosis}</td>
+            <td>${row.treatment}</td>
+            </tr>
+            `;
+        });
+    });
+
+}
+
+
+const form = document.getElementById("treatmentForm");
+
+if(form){
+form.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("save_treat.php",{
+        method:"POST",
+        body:formData
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        if(data.toLowerCase().includes("saved")){
+
+            Swal.fire({
+                icon:'success',
+                title:'Success',
+                text:'Treatment saved successfully'
+            }).then(()=>{
+                location.reload();
+            });
+
+        }else{
+
+            Swal.fire({
+                icon:'error',
+                title:'Error',
+                text:data
+            });
+
+        }
+
+    });
+
+});
+}
+
+}

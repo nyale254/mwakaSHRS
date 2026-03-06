@@ -1,13 +1,13 @@
 <?php
 session_start();
-include 'connect.php';
+include '../connect.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'PHPMailer/PHPMailer-PHPMailer-3cd2a2a/src/Exception.php';
-require 'PHPMailer/PHPMailer-PHPMailer-3cd2a2a/src/PHPMailer.php';
-require 'PHPMailer/PHPMailer-PHPMailer-3cd2a2a/src/SMTP.php';
+require '../PHPMailer/PHPMailer-PHPMailer/src/Exception.php';
+require '../PHPMailer/PHPMailer-PHPMailer/src/PHPMailer.php';
+require '../PHPMailer/PHPMailer-PHPMailer/src/SMTP.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
@@ -26,63 +26,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $token = bin2hex(random_bytes(16));
             $expires = date("Y-m-d H:i:s", strtotime("+1 hour"));
+            
+            $delete = $conn->prepare("DELETE FROM password_resets WHERE user_id=?");
+            $delete->bind_param("i", $user_id);
+            $delete->execute();
+            $delete->close();
 
             $insert = $conn->prepare("INSERT INTO password_resets (user_id, token, expires_at) VALUES (?, ?, ?)");
             $insert->bind_param("iss", $user_id, $token, $expires);
             $insert->execute();
             $insert->close();
 
-            $reset_link = "http://localhost/Mwaka.SHRS.2/reset_password.php?token=$token";
+            $reset_link = "http://localhost/Mwaka.SHRS.2/password_manager/reset_password.php?token=$token";
+            $mail = new PHPMailer(true);
 
-            if ($_SERVER['SERVER_NAME'] === 'localhost') {
-                file_put_contents('reset_links.log', "User: $email - Link: $reset_link\n", FILE_APPEND);
-                $success = "Development Mode: Reset link logged. Check reset_links.log file.";
-            } else {
-                $mail = new PHPMailer(true);
-                try {
-                    $mail->isSMTP();
-                    $mail->Host       = 'smtp.gmail.com';
-                    $mail->SMTPAuth   = true;
-                    $mail->Username   = 'titusnyale1@gmail.com'; 
-                    $mail->Password   = 'gszs lpsp ovpk dzxh';   
-                    $mail->SMTPSecure = 'tls';
-                    $mail->Port       = 587;
+            try {
 
-                    $mail->setFrom('support@shrs.ac.ke', 'SHRS Support');
-                    $mail->addAddress($email, $fullname);
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'titusnyale1@gmail.com';
+                $mail->Password   = 'gszs lpsp ovpk dzxh'; 
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
 
-                    $mail->isHTML(true);
-                        $mail->Subject = 'Password Reset Request';
+                $mail->setFrom('support@shrs.ac.ke', 'SHRS Support');
+                $mail->addAddress($email, $fullname);
 
-                        $mail->Body = "
-                            <div style='font-family: Arial; max-width:600px; padding:20px;'>
-                                <h2 style='color:#1e81c4;'>Student Health Record System</h2>
-                                <p>Hello $fullname,</p>
-                                <p>Click the button below to reset your password:</p>
+                $mail->isHTML(true);
+                $mail->Subject = 'Reset Your Password - SHRS';
 
-                                <p>
-                                    <a href='$reset_link'
-                                    style='display:inline-block;
-                                            padding:12px 20px;
-                                            background:#1e81c4;
-                                            color:#ffffff;
-                                            text-decoration:none;
-                                            border-radius:5px;'>
-                                        Reset Password
-                                    </a>
-                                </p>
+                $mail->Body = "
+                <div style='font-family:Arial; max-width:600px; margin:auto; padding:20px;'>
 
-                                <p>This link expires in 1 hour.</p>
-                                <p>If you did not request this, please ignore this email.</p>
-                            </div>
-                        ";
+                    <h2 style='color:#1e81c4;'>Student Health Record System</h2>
 
-                    $mail->AltBody = "Hello $fullname,\n\nCopy and paste this link into your browser:\n$reset_link\n\nThis link expires in 1 hour.";
-                    $mail->send();
-                    $success = "Password reset link sent to your email!";
-                } catch (Exception $e) {
-                    $error = "Mailer Error: {$mail->ErrorInfo}";
-                }
+                    <p>Hello <b>$fullname</b>,</p>
+
+                    <p>We received a request to reset your password.</p>
+
+                    <p>
+                    Click the button below to reset your password:
+                    </p>
+
+                    <p style='text-align:center'>
+                        <a href='$reset_link'
+                        style='display:inline-block;
+                        padding:12px 20px;
+                        background:#1e81c4;
+                        color:white;
+                        text-decoration:none;
+                        border-radius:5px;
+                        font-size:15px'>
+                        Reset Password
+                        </a>
+                    </p>
+
+                    <p>This link will expire in <b>1 hour</b>.</p>
+
+                    <p>If you did not request this password reset, please ignore this email.</p>
+
+                    <hr>
+
+                    <small>Student Health Record System (SHRS)</small>
+
+                </div>
+                ";
+
+                $mail->AltBody = "Hello $fullname,\n\nReset your password using this link:\n$reset_link\n\nThis link expires in 1 hour.";
+
+                $mail->send();
+
+                $success = "A password reset link has been sent to your email.";
+
+            } catch (Exception $e) {
+
+                $error = "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
             }
 
             $action = "Forgot Password Request";
@@ -228,7 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit">Send Reset Link</button>
     </form>
 
-    <a href="login.php" class="back-link">Back to Login</a>
+    <a href="../login.php" class="back-link">Back to Login</a>
 </div>
 </body>
 </html>

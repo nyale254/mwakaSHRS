@@ -69,22 +69,47 @@ if (isset($_POST["login"])) {
 </head>
 <body>
 
-<div class="login-box">
-    <h2>SHRS Login</h2>
+<div class="login-container">
+    <div class="login-box">
+        <h2>SHRS Login</h2>
 
-    <?php  if ($submitted && $error != "") { ?>
-        <p class="error"><?php echo $error; ?></p>
-    <?php } ?>
+        <?php if ($submitted && $error != "") { ?>
+            <p class="error"><?php echo $error; ?></p>
+        <?php } ?>
 
-    <form method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" placeholder=" enter your username" required >
-        <label>Password:</label>
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <button type="submit" name="login" value="login">Login</button>
-        <a href="/Mwaka.SHRS.2/forgot_password.php" class='forget_btn'> Forgot your password </a>
-    </form>
+        <form method="POST">
+            <div>
+                <label>Username:</label>
+                <input type="text" name="username" placeholder="enter your username" required>
+            </div>
+            
+            <div class= 'password_box'>
+                <label>Password:</label>
+                <input type="password" name="password" id="password" placeholder="Enter Password" required>
+                <span class="password-toggle" id="toggleIcon">👁️</span>
+            </div>
+
+            <button type="submit" name="login" value="login">Login</button>
+
+            <a href="/Mwaka.SHRS.2/password_manager/forgot_password.php" class="forget_btn">
+                Forgot your password
+            </a>
+        </form>
+    </div>
 </div>
-
+<script>
+    const toggleIcon = document.getElementById('toggleIcon');
+    const passwordField = document.getElementById('password');
+    
+    toggleIcon.addEventListener('click', function() {
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleIcon.textContent = '👁️‍🗨️'; 
+        } else {
+            passwordField.type = 'password';
+            toggleIcon.textContent = '👁️'; 
+        }
+    });
+</script>
 </body>
 </html>

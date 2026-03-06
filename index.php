@@ -13,8 +13,9 @@
 </header>
 <nav class="nav">
     <a  href="index.php" class="active">Home</a>
-    <a href="#" class="nav-link" data-page="about_us.php">About</a>
-    <a href="#" class="nav-link" data-page="contact.php">Contact</a>
+    <a href="/Mwaka.SHRS.2/login.php">Login</a>
+    <a href="#" class="nav-link" data-page="/Mwaka.SHRS.2/main/about_us.php">About</a>
+    <a href="#" class="nav-link" data-page="/Mwaka.SHRS.2/main/contact.php">Contact</a>
 </nav>
 
 
@@ -25,8 +26,8 @@
         student medical records, appointments, and treatments efficiently.
     </p>
 
-    <div class="buttons">
-        <a href="login.php" class="btn">Login to System</a>
+    <div class="btn">
+        <a href="/Mwaka.SHRS.2/login.php">Login to System</a>
     </div>
 </main>
 <footer class="footer">
