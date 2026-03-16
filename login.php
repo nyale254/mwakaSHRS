@@ -10,7 +10,7 @@ if (isset($_POST["login"])) {
 
     $username = trim($_POST["username"]);
     $password = trim($_POST["password"]); 
-
+    
     $sql = "SELECT * FROM users WHERE username = ?";
     $stmt = mysqli_prepare($conn, $sql);
 
@@ -22,11 +22,26 @@ if (isset($_POST["login"])) {
         if ($row = mysqli_fetch_assoc($result)) {
 
             if (password_verify($password,$row['password'])) {
+                $user_id = $row['user_id'];
 
                 $_SESSION['username']  = $row['username'];
                 $_SESSION['fullname']  = $row['fullname'];
                 $_SESSION['role']      = $row['role'];
                 $_SESSION['user_id']   = $row['user_id'];
+                
+                $action = "Logging in";
+                $detail = "Logged in to the system: $user_id with treatment ID: $username";
+                $ip_address = $_SERVER['REMOTE_ADDR'];
+
+                $log_query = "INSERT INTO activity_log(user_id, action, detail, ip_address, created_at)
+                VALUES(
+                    '$user_id',
+                    '".mysqli_real_escape_string($conn,$action)."',
+                    '".mysqli_real_escape_string($conn,$detail)."',
+                    '$ip_address',
+                    NOW()
+                )";
+                mysqli_query($conn,$log_query);
 
 
                 if ($row['role'] === 'student') {
@@ -57,6 +72,7 @@ if (isset($_POST["login"])) {
     } else {
         $error = "Database error.";
     }
+    
 }
 ?>
 

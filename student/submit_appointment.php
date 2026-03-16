@@ -8,8 +8,17 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     echo json_encode(['success'=>false, 'message'=>'Unauthorized']);
     exit();
 }
+$user_id = $_SESSION['user_id'];
 
-$student_id = $_SESSION['user_id'];
+$res = mysqli_query($conn, "SELECT student_id FROM students WHERE user_id = $user_id");
+$student = mysqli_fetch_assoc($res);
+
+if (!$student) {
+    echo json_encode(['success'=>false,'message'=>'No student record found']);
+    exit();
+}
+
+$student_id = $student['student_id'];
 $appointment_date = $_POST['appointment_date'] ?? '';
 $reason = trim($_POST['reason'] ?? '');
 
@@ -32,8 +41,11 @@ if(mysqli_stmt_execute($stmt)){
         mysqli_stmt_close($notify);
     }
     echo json_encode(['success'=>true,'message'=>'Appointment requested successfully']);
-}else{
-    echo json_encode(['success'=>false,'message'=>'Error booking appointment']);
+}else {
+    echo json_encode([
+        'success'=>false,
+        'message'=>'Error booking appointment: ' . mysqli_error($conn)
+    ]);
 }
 mysqli_stmt_close($stmt);
 ?>

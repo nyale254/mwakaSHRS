@@ -28,6 +28,7 @@ $result = mysqli_stmt_get_result($stmt);
     <meta charset="UTF-8">
     <title>Student Management | SHRS</title>
     <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/student_management.css">
+    <script src="/Mwaka.SHRS.2/scripts/sweetalert2.all.min.js"></script>
 </head>
 <body>
 
@@ -74,7 +75,7 @@ $result = mysqli_stmt_get_result($stmt);
         if (mysqli_num_rows($result) > 0):
             while ($row = mysqli_fetch_assoc($result)):
         ?>
-        <tr>
+        <tr data-id="<?= $row['student_id'] ?>">
             <td><?= $count++ ?></td>
             <td><?= htmlspecialchars($row['full_name']) ?></td>
             <td><?= htmlspecialchars($row['reg_no']) ?></td>
@@ -84,9 +85,10 @@ $result = mysqli_stmt_get_result($stmt);
             <td class="actions">
                 <a href="view_student.php?id=<?= $row['student_id'] ?>">View</a>
                 <a href="edit_student.php?id=<?= $row['student_id'] ?>">Edit</a>
-                <a href="delete.php?id=<?= $row['student_id'] ?>"
-                   onclick="return confirm('Delete this student?')"
-                   class="danger">Delete</a>
+                <a href="#" 
+                class="danger delete-btn"
+                data-id="<?= $row['student_id'] ?>"
+                data-name="<?= htmlspecialchars($row['full_name'], ENT_QUOTES) ?>">Delete</a>
             </td>
         </tr>
         <?php
@@ -101,10 +103,62 @@ $result = mysqli_stmt_get_result($stmt);
 
 </div>
 <script>
-    function confirmDelete(name) {
-    return confirm("Are you sure you want to delete " + name + "?");
-}
+ 
+document.addEventListener("click", function(e) {
 
+    if (e.target.classList.contains("delete-btn")) {
+        e.preventDefault();
+
+        const studentId = e.target.dataset.id;
+        const studentName = e.target.dataset.name;
+        const row = e.target.closest("tr");
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `You are about to delete ${studentName}. This cannot be undone!`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                fetch(`/Mwaka.SHRS.2/admin/delete.php?id=${studentId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (row) row.remove();
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Deleted!",
+                                text: data.message || `${studentName} has been deleted.`,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error!",
+                                text: data.message || "Failed to delete student."
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "Delete failed"
+                        });
+                    });
+
+            }
+        });
+    }
+
+});
 </script>
 </body>
 </html>

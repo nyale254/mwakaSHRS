@@ -19,9 +19,8 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $student_id = intval($_GET['id']);
 
 $query = "
-SELECT s.student_id, s.full_name, s.reg_no, s.gender, s.course, s.DoB, m.blood_group
+SELECT s.student_id, s.full_name, s.reg_no, s.gender, s.course, s.DoB, s.blood_type
 FROM students s
-LEFT JOIN medical_records m ON s.student_id = m.student_id
 WHERE s.student_id = ?
 ORDER BY s.course DESC
 ";

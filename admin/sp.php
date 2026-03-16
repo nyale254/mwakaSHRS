@@ -1,143 +1,144 @@
 <?php
 session_start();
-include "../connect.php";
+include '../connect.php';
 
-$inactiveLimit = 600;
-
-if (isset($_SESSION['last_activity'])) {
-    $inactiveTime = time() - $_SESSION['last_activity'];
-
-    if ($inactiveTime > $inactiveLimit) {
-        session_unset();
-        session_destroy();
-        header("Location:/Mwaka.SHRS.2/index.php?timeout=1");
-        exit();
-    }
-}
-
-$_SESSION['last_activity'] = time();
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../index.php");
+if (!isset($_SESSION['user_id'])) {
+    echo "<p>Session expired. Please login again.</p>";
     exit();
 }
 
-$studentsResult = mysqli_query($conn, "SELECT COUNT(*) AS total FROM students");
-$totalStudents = mysqli_fetch_assoc($studentsResult)['total'];
+$role = $_SESSION['role'];
+$period = $_GET['period'] ?? 'monthly';
+$year = $_GET['year'] ?? date('Y');
+$whereConditions = [];
+$params = [];
+$types = '';
 
-$nursesResult = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role='nurse'");
-$totalNurses = mysqli_fetch_assoc($nursesResult)['total'];
+if ($role === 'admin') {
+} elseif ($role === 'nurse') {
+    $whereConditions[] = "nurse_id = ?";
+    $params[] = $_SESSION['user_id'];
+    $types .= 'i'; 
+} else {
+    $whereConditions[] = "student_id = ?";
+    $params[] = $_SESSION['user_id'];
+    $types .= 'i'; 
+}
 
-$doctorsResult = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role='doctor'");
-$totalDoctors = mysqli_fetch_assoc($doctorsResult)['total'];
+$whereClause = '';
+if (!empty($whereConditions)) {
+    $whereClause = "WHERE " . implode(" AND ", $whereConditions);
+}
 
-$today = date("Y-m-d");
-$appointmentsResult = mysqli_query(
-    $conn,
-    "SELECT COUNT(*) AS total FROM appointments WHERE appointment_date='$today'"
-);
-$todayAppointments = mysqli_fetch_assoc($appointmentsResult)['total'];
+if ($period === 'yearly') {
+    $query = "
+        SELECT YEAR(visit_date) as label, COUNT(*) as total
+        FROM visits
+        $whereClause
+        GROUP BY YEAR(visit_date)
+        ORDER BY YEAR(visit_date)
+    ";
+} else {
+    if (!empty($whereClause)) {
+        $whereClause .= " AND YEAR(visit_date) = ?";
+    } else {
+        $whereClause = "WHERE YEAR(visit_date) = ?";
+    }
+    $params[] = $year;
+    $types .= 'i'; 
+    
+    $query = "
+        SELECT MONTH(visit_date) as label, COUNT(*) as total
+        FROM visits
+        $whereClause
+        GROUP BY MONTH(visit_date)
+        ORDER BY MONTH(visit_date)
+    ";
+}
+
+$stmt = mysqli_prepare($conn, $query);
+
+if ($stmt) {
+    if (!empty($params)) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+    }
+    
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if (!$result) {
+        die("Query failed: " . mysqli_error($conn));
+    }
+} else {
+    die("Prepare failed: " . mysqli_error($conn));
+}
+
+$labels = [];
+$totals = [];
+
+while ($row = mysqli_fetch_assoc($result)) {
+    if ($period === 'monthly') {
+        $labels[] = date('F', mktime(0, 0, 0, $row['label'], 1));
+    } else {
+        $labels[] = $row['label'];
+    }
+    $totals[] = $row['total'];
+}
+
+mysqli_stmt_close($stmt);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard | SHRS</title>
-   <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/nurse_dashboard.css">
+    <title>Reports & Export | SHRS</title>
+    <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/report.css">
+    
+    <style>
+        body {
+            background-color: #f4f7fc;
+            padding-top: 20px; 
+            min-height: 100vh;
+        }
 
+    </style>
 </head>
 <body>
 
-<div class="container">
+<h2>Reports & Export</h2>
 
-    <aside class="sidebar">
-    <h2>SHRS Admin</h2>
-    <ul>
-        <li><a href="dashboard.php">Dashboard</a></li>
-        <li><a href="users_management.php">User Management</a></li>
-        <li><a href="student_management.php">Student Management</a></li>
-        <li><a href="report.php">Reports</a></li>
-        <li><a href="audit_logs.php">Audit Logs</a></li>
-        <li class="divider">.....................</li>
-        <li><a href="settings.php">Settings</a></li>
-        <li><a href="/Mwaka.SHRS.2/logout.php" class="logout">Logout</a></li>
-    </ul>
-</aside>
+<form method="GET">
+    <label>Period</label>
+    <select name="period" onchange="this.form.submit()">
+        <option value="monthly" <?= $period=='monthly'?'selected':'' ?>>Monthly</option>
+        <option value="yearly" <?= $period=='yearly'?'selected':'' ?>>Yearly</option>
+    </select>
 
+    <?php if ($period === 'monthly') { ?>
+        <label>Year</label>
+        <input type="number" name="year" value="<?= htmlspecialchars($year) ?>" min="2000" max="<?= date('Y') ?>">
+    <?php } ?>
 
-    <main class="main">
+    <button type="submit">Generate</button>
 
-        <header class="topbar">
-            <h1>Admin Dashboard</h1>
-            <p>Welcome, <?php echo htmlspecialchars($_SESSION['fullname']); ?></p>
-        </header>
+    <a class="btn" href="export.php?period=<?= urlencode($period) ?>&year=<?= urlencode($year) ?>">
+        Export PDF
+    </a>
+    <a href="dashboard.php" class="back-btn">← Back</a>
+</form>
 
-        <section class="cards">
-            <div class="card">
-                <h3>Total Students</h3>
-                <p><?php echo $totalStudents; ?></p>
-            </div>
-            <div class="card">
-                <h3>Total Nurses</h3>
-                <p><?php echo $totalNurses; ?></p>
-            </div>
-            <div class="card">
-                <h3>Total Doctors</h3>
-                <p><?php echo $totalDoctors; ?></p>
-            </div>
-            <div class="card">
-                <h3>Today's Appointments</h3>
-                <p><?php echo $todayAppointments; ?></p>
-            </div>
-        </section>
+<?php if (empty($labels)) { ?>
+    <p>No data found for the selected period.</p>
+<?php } else { ?>
+    <div class="chart-container">
+        <canvas 
+        id="reportChart"
+        data-labels='<?= json_encode($labels) ?>'
+        data-totals='<?= json_encode($totals) ?>'
+        data-period="<?= $period === 'monthly' ? 'Month' : 'Year' ?>">
 
-        <section class="table-section">
-            <h2>Recent Appointments</h2>
-            <table>
-                <tr>
-                    <th>#</th>
-                    <th>Student</th>
-                    <th>Reg No</th>
-                    <th>Date</th>
-                    <th>Purpose</th>
-                </tr>
-
-                <?php
-                $recentQuery = "
-                    SELECT a.appointment_date, a.reason, s.full_name,s.reg_no
-                    FROM appointments a
-                    JOIN students s ON a.student_id = s.student_id
-                    ORDER BY a.appointment_date DESC
-                    LIMIT 5
-                ";
-                $recentResult = mysqli_query($conn, $recentQuery);
-
-                $count = 1;
-                if (mysqli_num_rows($recentResult) > 0) {
-                    while ($row = mysqli_fetch_assoc($recentResult)) {
-                        echo "<tr>
-                                <td>{$count}</td>
-                                <td>{$row['full_name']}</td>
-                                <td>{$row['reg_no']}</td>
-                                <td>{$row['appointment_date']}</td>
-                                <td>{$row['reason']}</td>
-                              </tr>";
-                        $count++;
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>No appointments found</td></tr>";
-                }
-                ?>
-            </table>
-        </section>
-
-    </main>
-</div>
-
-<script>
-setTimeout(() => { location.reload(); }, 60000); 
-
-</script>
+        </canvas>
+    </div>
+<?php } ?>
 
 </body>
 </html>

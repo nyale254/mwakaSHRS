@@ -9,6 +9,16 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 
 $user_id = $_SESSION['user_id'];
 
+$res = mysqli_query($conn, "SELECT student_id FROM students WHERE user_id = $user_id");
+$student = mysqli_fetch_assoc($res);
+
+if (!$student) {
+    echo json_encode(['success'=>false,'message'=>'No student record found']);
+    exit();
+}
+
+$student_id = $student['student_id'];
+
 $query = "
     SELECT
         s.student_id,s.full_name, s.reg_no,s.gender, s.DoB AS date_of_birth ,s.phone,s.course,s.year_of_study,
@@ -20,7 +30,7 @@ $query = "
 ";
 
 $stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_bind_param($stmt, "i", $student_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $student = mysqli_fetch_assoc($result);
@@ -179,10 +189,18 @@ if (!empty($student['profile_photo']) &&
     </div>
 
     <div class="actions">
-        <a href="appointment.php" class="btn secondary">Request Appointment</a>
+        <a href="#" class="btn secondary" onclick="loadPage('appointment.php')">Request Appointment</a>
     </div>
 
 </div>
+<!--<div id="appointment-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="appointment-container">
+            
+        </div>
+    </div>
+</div>-->
 
 <script src="/Mwaka.SHRS.2/scripts/profile.js"></script>
 </body>

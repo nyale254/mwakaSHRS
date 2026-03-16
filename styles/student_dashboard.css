@@ -46,8 +46,11 @@ body {
 .nav a:hover {
    background: rgba(255, 255, 255, 0.2);
 }
+.logout_btn{
+    background: red !important;
+}
 .nav a.logout_btn:hover {
-    background: red;
+    background: rgb(221, 68, 68);
 }
 .main {
     flex: 1;

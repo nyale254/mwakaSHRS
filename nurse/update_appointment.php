@@ -30,6 +30,13 @@ if(mysqli_stmt_execute($stmt)) {
     mysqli_stmt_execute($notify);
     mysqli_stmt_close($notify);
 
+    if($status === 'confirmed'){
+        $stmt2 = mysqli_prepare($conn, "UPDATE appointments SET reminder_sent=0 WHERE appointment_id=?");
+        mysqli_stmt_bind_param($stmt2, "i", $appointment_id);
+        mysqli_stmt_execute($stmt2);
+        mysqli_stmt_close($stmt2);
+    }
+
     echo json_encode(['success'=>true]);
 } else {
     echo json_encode(['success'=>false,'message'=>mysqli_error($conn)]);

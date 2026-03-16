@@ -12,7 +12,7 @@ $search     = isset($_GET['search']) ? trim($_GET['search']) : '';
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
 $end_date   = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
-$sql = "SELECT * FROM audit_logs WHERE 1=1"; 
+$sql = "SELECT * FROM activity_log WHERE 1=1"; 
 
 if ($search !== '') {
     $sql .= " AND (user LIKE '%$search%' OR action LIKE '%$search%')";
@@ -39,7 +39,7 @@ $result = mysqli_query($conn, $sql);
 
 <h2>Audit Logs</h2>
 
-<form method="GET" class="filter-form">
+<form method="GET" class="filter-form" action ="audit_logs.php" >
     <input type="text" name="search" placeholder="Search user or action"
            value="<?= htmlspecialchars($search); ?>">
 
@@ -61,8 +61,8 @@ $result = mysqli_query($conn, $sql);
 
     <?php while ($row = mysqli_fetch_assoc($result)) { ?>
     <tr>
-        <td><?= $row['logs_id']; ?></td>
-        <td><?= htmlspecialchars($row['user']); ?></td>
+        <td><?= $row['log_id']; ?></td>
+        <td><?= htmlspecialchars($row['fullname']); ?></td>
         <td><?= htmlspecialchars($row['action']); ?></td>
         <td><?= $row['ip_address']; ?></td>
         <td><?= $row['created_at']; ?></td>

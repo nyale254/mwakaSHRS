@@ -2,17 +2,12 @@
 session_start();
 include "../connect.php"; 
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../index.php");
     exit();
 }
 
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../unauthorized.php");
-    exit();
-}
-$inactiveLimit = 600;
-
+$inactiveLimit = 6000;
 if (isset($_SESSION['last_activity'])) {
     $inactiveTime = time() - $_SESSION['last_activity'];
 
@@ -70,7 +65,7 @@ while($row = mysqli_fetch_assoc($trendResult)){
 <head>
     <title>SHRS Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="\Mwaka.SHRS.2\styles\dashboard.css" rel="stylesheet">
+    <link href="/Mwaka.SHRS.2/styles/dashboard.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -84,7 +79,12 @@ while($row = mysqli_fetch_assoc($trendResult)){
         SHRS SYSTEM
     </div>
     <ul>
-        <li><a class="active">Dashboard</a></li>
+        <li><a href="dashboard.php" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
+                    <path d="M480-340q33 0 56.5-23.5T560-420q0-33-23.5-56.5T480-500q-33 0-56.5 23.5T400-420q0 33 23.5 56.5T480-340ZM160-120q-33 0-56.5-23.5T80-200v-440q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v440q0 33-23.5 56.5T800-120H160Zm0-80h640v-440H160v440Zm240-520h160v-80H400v80ZM160-200v-440 440Z"/>
+                </svg>
+                Dashboard
+        </a></li>
 
         <li><a href="student_management.php">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
@@ -93,18 +93,11 @@ while($row = mysqli_fetch_assoc($trendResult)){
             Manage Students
         </a></li>
 
-        <li><a href="users_management.php">
+        <li><a href="#" class="nav-link" data-page="users_management.php">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
                 <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 49 46.5t17 58.5v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Zm0-80q17 0 28.5-11.5T520-600q0-17-11.5-28.5T480-640q-17 0-28.5 11.5T440-600q0 17 11.5 28.5T480-560Zm1 240Zm-1-280Z"/>
             </svg>
-            Manage Students
-        </a></li>
-
-        <li><a href="records.php">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
-                <path d="M200-200h560v-367L567-760H200v560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h400l240 240v400q0 33-23.5 56.5T760-120H200Zm80-160h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h280v-80H280v80Zm-80 400v-560 560Z"/>
-            </svg>
-            Health Records
+            Manage Users
         </a></li>
 
         <li><a href="#" class="nav-link" data-page="medications.php">
@@ -114,14 +107,14 @@ while($row = mysqli_fetch_assoc($trendResult)){
             Medications
         </a></li>
 
-        <li><a href="audit_logs.php">
+        <li><a href="#" class="nav-link" data-page="audit_logs.php">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
                 <path d="M640-160v-280h160v280H640Zm-240 0v-640h160v640H400Zm-240 0v-440h160v440H160Z"/>
             </svg>
             Audit logs
         </a></li>
 
-        <li><a href="report.php">
+        <li><a href="#" class="nav-link" data-page="report.php">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5">
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm221.5-198.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/>
             </svg>
@@ -137,7 +130,7 @@ while($row = mysqli_fetch_assoc($trendResult)){
     </ul>
 </div>
 
-<div class="main">
+<div class="main" >
     <div class="topbar">
         <div class="search">
             <input type="text" id="searchBox" placeholder="Search students...">
@@ -183,7 +176,10 @@ while($row = mysqli_fetch_assoc($trendResult)){
 
             <div class="box">
                 <h2>Health Records Trend</h2>
-                <canvas id="trendChart"></canvas>
+                <canvas id="trendChart"
+                    data-labels='<?= json_encode($months) ?>'
+                    data-totals='<?= json_encode($totals) ?>'>
+                </canvas>
             </div>
 
             <div class="box">
@@ -224,91 +220,8 @@ while($row = mysqli_fetch_assoc($trendResult)){
 
     </div>
 </div>
-
-<script>
-const ctx = document.getElementById('trendChart').getContext('2d');
-
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: <?= json_encode($months); ?>,
-        datasets: [{
-            label: 'Health Records',
-            data: <?= json_encode($totals); ?>,
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37,99,235,0.1)',
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: true }
-        }
-    }
-});
-
-document.getElementById("searchBox").addEventListener("keyup", function(){
-    let value = this.value.toLowerCase();
-    console.log("Searching:", value);
-});
-
-const links = document.querySelectorAll('.nav-link');
-const content = document.getElementById('main-content');
-
-links.forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-
-        links.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-
-        const page = this.getAttribute('data-page');
-
-        fetch(page)
-            .then(response => response.text())
-            .then(html => {
-                content.innerHTML = html;
-
-                if(page.includes('dashboard')) {
-                    initDashboardChart(); // 
-                }
-            })
-            .catch(err => {
-                content.innerHTML = "<p>Error loading page.</p>";
-                console.error(err);
-            });
-    });
-});
-
-function initDashboardChart() {
-    const ctx = document.getElementById('trendChart')?.getContext('2d');
-    if(!ctx) return;
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode($months); ?>,
-            datasets: [{
-                label: 'Health Records',
-                data: <?= json_encode($totals); ?>,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37,99,235,0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: true } }
-        }
-    });
-}
-
-initDashboardChart();
-
-</script>
-
+<script src="/Mwaka.SHRS.2/scripts/chart.umd.min.js"></script>
+<script src="/Mwaka.SHRS.2/scripts/sweetalert2.all.min.js"></script>
+<script src="/Mwaka.SHRS.2/scripts/admin.js"></script>
 </body>
 </html>

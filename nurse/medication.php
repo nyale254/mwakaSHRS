@@ -163,23 +163,5 @@ $authResult = mysqli_query($conn, $authQuery);
         </div>
     </div>
 </div>
-<script>
-
-setInterval(()=> location.reload(), 120000);
-
-document.getElementById("showAddMedication").addEventListener("click", ()=>{
-document.getElementById("addMedicationModal").style.display = "flex";
-});
-
-document.getElementById("closeModal").addEventListener("click", ()=>{
-    document.getElementById("addMedicationModal").style.display = "none";
-});
-
-window.onclick = function(e){
-    if(e.target == document.getElementById("addMedicationModal")){
-        document.getElementById("addMedicationModal").style.display = "none";
-    }
-}
-</script>
 </body>
 </html>

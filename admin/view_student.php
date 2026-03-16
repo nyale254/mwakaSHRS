@@ -15,12 +15,11 @@ $student_id = (int) $_GET['id'];
 
 $query = "
     SELECT s.*, u.username, u.status AS account_status, u.user_id,
-           m.blood_group,
-           a.allergies,
+           s.blood_type,
+           c.allergies
     FROM students s
     LEFT JOIN users u ON s.user_id = u.user_id
-    LEFT JOIN medical_records m ON s.student_id = m.student_id
-    LEFT JOIN allergies_conditions a ON s.student_id = a.student_id
+    LEFT JOIN conditions_allergies c ON s.student_id = c.student_id
     WHERE s.student_id = ?
 ";
 

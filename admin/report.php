@@ -2,15 +2,14 @@
 session_start();
 include '../connect.php';
 
-if (!isset($_SESSION['role'])) {
-    header("Location: ../index.php");
+if (!isset($_SESSION['user_id'])) {
+    echo "<p>Session expired. Please login again.</p>";
     exit();
 }
 
 $role = $_SESSION['role'];
 $period = $_GET['period'] ?? 'monthly';
 $year = $_GET['year'] ?? date('Y');
-
 $whereConditions = [];
 $params = [];
 $types = '';
@@ -34,7 +33,7 @@ if (!empty($whereConditions)) {
 if ($period === 'yearly') {
     $query = "
         SELECT YEAR(visit_date) as label, COUNT(*) as total
-        FROM visit
+        FROM visits
         $whereClause
         GROUP BY YEAR(visit_date)
         ORDER BY YEAR(visit_date)
@@ -50,7 +49,7 @@ if ($period === 'yearly') {
     
     $query = "
         SELECT MONTH(visit_date) as label, COUNT(*) as total
-        FROM visit
+        FROM visits
         $whereClause
         GROUP BY MONTH(visit_date)
         ORDER BY MONTH(visit_date)
@@ -93,7 +92,15 @@ mysqli_stmt_close($stmt);
 <head>
     <title>Reports & Export | SHRS</title>
     <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/report.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background-color: #f4f7fc;
+            padding-top: 20px; 
+            min-height: 100vh;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -123,40 +130,14 @@ mysqli_stmt_close($stmt);
     <p>No data found for the selected period.</p>
 <?php } else { ?>
     <div class="chart-container">
-        <canvas id="reportChart"></canvas>
-    </div>
+        <canvas 
+        id="reportChart"
+        data-labels='<?= json_encode($labels) ?>'
+        data-totals='<?= json_encode($totals) ?>'
+        data-period="<?= $period === 'monthly' ? 'Month' : 'Year' ?>">
 
-    <script>
-    new Chart(document.getElementById('reportChart'), {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode($labels) ?>,
-            datasets: [{
-                label: 'Total Visits',
-                data: <?= json_encode($totals) ?>,
-                backgroundColor: '#3498db'
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Visits'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: '<?= $period === 'monthly' ? 'Month' : 'Year' ?>'
-                    }
-                }
-            }
-        }
-    });
-    </script>
+        </canvas>
+    </div>
 <?php } ?>
 
 </body>

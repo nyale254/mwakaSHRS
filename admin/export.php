@@ -11,12 +11,12 @@ $period = $_GET['period'] ?? 'monthly';
 $year = $_GET['year'] ?? date('Y');
 
 $query = ($period === 'yearly')
-? "SELECT YEAR(visit_date) period, COUNT(*) total FROM visit GROUP BY YEAR(visit_date)"
-: "SELECT MONTH(visit_date) period, COUNT(*) total FROM visit WHERE YEAR(visit_date)='$year' GROUP BY MONTH(visit_date)";
+? "SELECT YEAR(visit_date) period, COUNT(*) total FROM visits GROUP BY YEAR(visit_date)"
+: "SELECT MONTH(visit_date) period, COUNT(*) total FROM visits WHERE YEAR(visit_date)='$year' GROUP BY MONTH(visit_date)";
 
 $result = mysqli_query($conn, $query);
 
-$html = "<h2>EduHealth Report</h2>
+$html = "<h2>SHRS Report</h2>
 <table border='1' width='100%' cellpadding='6'>
 <tr><th>Period</th><th>Total Visits</th></tr>";
 

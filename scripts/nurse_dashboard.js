@@ -67,6 +67,10 @@ links.forEach(link => {
                 if(page.includes('treatment')){
                     initTreatmentPage();
                 }
+                if(page.includes('medication')){
+                   initMedicationPage();
+                }
+    
             })
             .catch(err => {
                 content.innerHTML = "<p>Error loading page.</p>";
@@ -293,4 +297,30 @@ form.addEventListener("submit", function(e){
 });
 }
 
+}
+//medication.php
+
+function initMedicationPage(){
+
+    setInterval(()=> location.reload(), 120000);
+
+    const showBtn = document.getElementById("showAddMedication");
+    const closeBtn = document.getElementById("closeModal");
+    const modal = document.getElementById("addMedicationModal");
+
+    if(!showBtn) return;
+
+    showBtn.addEventListener("click", ()=>{
+        modal.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", ()=>{
+        modal.style.display = "none";
+    });
+
+    window.onclick = function(e){
+        if(e.target == modal){
+            modal.style.display = "none";
+        }
+    }
 }

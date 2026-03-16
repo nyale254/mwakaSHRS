@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if(isset($_SESSION['user_id'])){
+    header("Location: dashboard.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +16,7 @@
 <body>
 
 <div class="contact-container" >
-    <div class="contact-header">
+    <div class="contact-header2">
         <h1>Contact Us</h1>
         <p>We are here to help. Reach out to us for any inquiries or support.</p>
     </div>
@@ -54,8 +62,5 @@
     </div>
 </div>
 
-<footer class="footer">
-    <p>© 2026 Student Health Record System | All Rights Reserved</p>
-</footer>
 </body>
 </html>

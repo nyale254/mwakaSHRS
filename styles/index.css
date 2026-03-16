@@ -2,52 +2,102 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #f4f6f8;
+    display:flex;
+    flex-direction:column;
+
 }
 
 .header {
-    background: #2c7be5;
-    color: white;
+    color: black;
     padding: 20px;
     text-align: center;
     position: fixed;
     width: 100%;
     z-index: 1000;
+    background:rgb(55, 11, 218);
+    
 }
 
 .nav {
-    background: #1a68d1;
+    background: #3281d1;
     padding: 10px;
-    text-align: center; position: fixed;
+    margin-left: 0px;
+    position: fixed;
     top: 150px; 
     width: 100%;
     z-index: 999;
+    display: flex;
+    align-items: center;
 }
 
-.nav a {
-    color: white;
+.nav a{
+    color: black;
     margin: 0 30px;
     text-decoration: none;
     font-weight: bold;
 
 }
-
 .nav a:hover {
     text-decoration: none;
     background-color: #174786;
     border: 2px solid none;
     border-radius: 3px;
     padding: 5px;
-    box-shadow: #1a68d1;
 }
 .nav a:active{
     background: blue;
     color: orangered;
 }
+.auth-buttons{
+    margin-left:700px;
+    display: flex;
+    align-items: center;
+}
 
-.content {
-    padding: 40px;
-    text-align: center;
-    padding-top: 200px;
+.btn2{
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn2:hover{
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px #00000033;
+}
+.content{
+    position:relative;
+    text-align:center;
+    padding-top:200px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    margin-top: 20px;
+}
+
+.content::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:
+    linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url("/Mwaka.SHRS.2/images/clinic.jpg");
+    background-size:cover;
+    background-position:center;
+    z-index:-1;
+}
+.top-header{
+    background:white;
+    padding:35px;
+    padding-top: 0px;
+    width: 80%;
+    border-radius: 15px;
 }
 .btn a{ 
     text-align: center;
@@ -61,21 +111,53 @@ body {
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.3s ease;
+    flex:1;
 }
 .btn a:hover{
-    background: #155d8b;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 15px #00000033;
 }
-.btn a :active{
+.btn a:active{
     transform: scale(0.96);
 }
+
+.services{
+padding:50px;
+text-align:center;
+}
+
+.service-container{
+display:flex;
+gap:20px;
+margin-top:30px;
+justify-content:center;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+width:200px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.about{
+background:white;
+padding:35px;
+padding-top: 0px;
+width: 80%;
+margin-left: 80px;
+margin-top: -30px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
 .footer {
     background: #222;
     color: white;
     text-align: center;
-    padding: 1px;
-    position: fixed;
+    padding: 3px;
     width: 100%;
     bottom: 0;
 }

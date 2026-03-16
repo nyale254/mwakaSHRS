@@ -46,10 +46,11 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY user_id DESC");
         <td><?= htmlspecialchars($row['status']); ?></td>
         <td>
             <a href="edit_user.php?id=<?= $row['user_id']; ?>">Edit</a>
-            <a href="delete.php?table=users&id=<?= $row['user_id']; ?>"
-              onclick="return confirmDelete('<?= htmlspecialchars($row['username']); ?>')"
-              class="delete-btn">
-              Delete
+           <a href="#"
+                class="delete-btn"
+                data-id="<?= $row['user_id']; ?>"
+                data-name="<?= htmlspecialchars($row['username'], ENT_QUOTES); ?>">
+                Delete
             </a>
 
             <a href="disable_user.php?id=<?= $row['user_id']; ?>">Disable</a>
@@ -57,12 +58,5 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY user_id DESC");
     </tr>
     <?php endwhile; ?>
 </table>
-
-<script>
-function confirmDelete(username) {
-    return confirm("Are you sure you want to delete the user: " + username + "?");
-}
-</script>
-
 </body>
 </html>

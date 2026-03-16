@@ -1,105 +1,85 @@
 <?php
 session_start();
-include "../connect.php";
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: 0");
+header("Pragma: no-cache");
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../index.php");
+include "../connect.php";
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+header('Content-Type: application/json');
+
+if(!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'){
+    echo json_encode([
+        'success'=>false,
+        'message'=>'Unauthorized'
+    ]);
     exit();
 }
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    die("Invalid user ID.");
+if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
+    echo json_encode([
+        'success'=>false,
+        'message'=>'Invalid user ID'
+    ]);
+    exit();
 }
-
 $user_id = (int) $_GET['id'];
 
-if ($user_id === $_SESSION['user_id']) {
-    die("You cannot delete your own account.");
+if($user_id === $_SESSION['user_id']){
+    echo json_encode([
+        'success'=>false,
+        'message'=>'You cannot delete your own account'
+    ]);
+    exit();
 }
 
-$query = "SELECT user_id, username, fullname, role FROM users WHERE user_id = ?";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$user = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
+mysqli_begin_transaction($conn);
 
-if (!$user) {
-    die("User not found.");
-}
+try {
 
-if (isset($_POST['confirm_delete'])) {
+    $stmt = mysqli_prepare($conn,"SELECT student_id FROM students WHERE user_id=?");
+    mysqli_stmt_bind_param($stmt,"i",$user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $student = mysqli_fetch_assoc($result);
 
-    mysqli_begin_transaction($conn);
+    if($student){
 
-    try {
-        if ($user['role'] === 'student') {
-            $depTables = ['students', 'medical_records', 'allergies_conditions'];
-            foreach ($depTables as $dep) {
-                $depStmt = mysqli_prepare($conn, "DELETE FROM $dep WHERE user_id = ?");
-                mysqli_stmt_bind_param($depStmt, "i", $user_id);
-                mysqli_stmt_execute($depStmt);
-                mysqli_stmt_close($depStmt);
-            }
-        }
+        $student_id = $student['student_id'];
 
-        $stmt = mysqli_prepare($conn, "DELETE FROM users WHERE user_id = ?");
-        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        $stmt = mysqli_prepare($conn,"DELETE FROM conditions_allergies WHERE student_id=?");
+        mysqli_stmt_bind_param($stmt,"i",$student_id);
         mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
 
-        mysqli_commit($conn);
+        $stmt = mysqli_prepare($conn,"DELETE FROM medical_records WHERE student_id=?");
+        mysqli_stmt_bind_param($stmt,"i",$student_id);
+        mysqli_stmt_execute($stmt);
 
-        header("Location: users_management.php?deleted=1");
-        exit();
+        $stmt = mysqli_prepare($conn,"DELETE FROM students WHERE user_id=?");
+        mysqli_stmt_bind_param($stmt,"i",$user_id);
+        mysqli_stmt_execute($stmt);
 
-    } catch (Exception $e) {
-        mysqli_rollback($conn);
-        die("Delete failed. Please try again.");
     }
+
+    $stmt = mysqli_prepare($conn,"DELETE FROM users WHERE user_id=?");
+    mysqli_stmt_bind_param($stmt,"i",$user_id);
+    mysqli_stmt_execute($stmt);
+
+    mysqli_commit($conn);
+
+    echo json_encode([
+        'success'=>true,
+        'message'=>'User deleted successfully'
+    ]);
+
+} catch(Exception $e){
+
+    mysqli_rollback($conn);
+
+    echo json_encode([
+        'success'=>false,
+        'message'=>$e->getMessage()
+    ]);
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Delete User | SHRS</title>
-    <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/delete.css">
-</head>
-<body>
-
-<div class="container">
-
-    <h2>Confirm Deletion</h2>
-
-    <div class="warning-box">
-        <p>
-            You are about to permanently delete the user <strong><?= htmlspecialchars($user['username']) ?></strong> 
-            (<?= htmlspecialchars($user['fullname']) ?>).<br>
-            <strong>This action cannot be undone.</strong>
-        </p>
-    </div>
-
-    <form method="POST" class="actions">
-        <button type="submit" name="confirm_delete" class="btn danger">
-            Yes, Delete
-        </button>
-        <a href="users_management.php" class="btn secondary">
-            Cancel
-        </a>
-    </form>
-
-</div>
-
-<script>
-    const btn = document.querySelector(".btn.danger");
-    btn.addEventListener("click", function(e) {
-        if(!confirm("Are you sure you want to delete this user? This cannot be undone.")) {
-            e.preventDefault();
-        }
-    });
-</script>
-</body>
-</html>

@@ -14,10 +14,19 @@ $student_id = $_SESSION['user_id'];
     <h2 class="section-title">Book Appointment</h2>
 
     <div class="dashboard-card">
-        <form id="appointmentForm" >
-            <div class="form-group" >
-                <label>Appointment Date & Time</label>
-                <input type="datetime-local" name="appointment_date" required>
+        <span class="close">&times;</span>
+        <form id="appointmentForm"  >
+            <div class="form-group">
+                <label for="appointment_date">Appointment Date & Time</label>
+                <input 
+                    type="datetime-local" 
+                    id="appointment_date" 
+                    name="appointment_date" 
+                    required
+                    min="<?= date('Y-m-d\TH:i') ?>"  
+                    class="form-control"
+                >
+                <small class="form-text">Select a date and time for your appointment (cannot be in the past).</small>
             </div>
 
             <div class="form-group">

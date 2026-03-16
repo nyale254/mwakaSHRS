@@ -107,8 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $action = "Forgot Password Request";
             $details = "User ($email) requested password reset";
             $ip_address = $_SERVER['REMOTE_ADDR'];
-            $logStmt = $conn->prepare("INSERT INTO activity_log (user_id, action, details, ip_address) VALUES (?, ?, ?, ?)");
-            $logStmt->bind_param("isss", $user_id, $action, $details, $ip_address);
+            $logStmt = $conn->prepare("INSERT INTO activity_log (user_id, action,fullname, details, ip_address) VALUES (?, ?, ?, ?)");
+            $logStmt->bind_param("issss", $user_id, $action, $details, $ip_address $fullname);
             $logStmt->execute();
             $logStmt->close();
 

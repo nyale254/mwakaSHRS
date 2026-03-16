@@ -311,7 +311,6 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
 </div>
 
 <script src="/Mwaka.SHRS.2/scripts/nurse_dashboard.js"></script>
-
 </body>
 </html>
 
