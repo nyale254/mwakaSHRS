@@ -1,6 +1,27 @@
 setTimeout(() => {
     location.reload();
 }, 90000000);
+document.addEventListener("DOMContentLoaded", function() {
+    initStudentSearch();
+    loadNotifications(); 
+    setupSearchObserver();
+});
+
+function setupSearchObserver() {
+    const observer = new MutationObserver(function(mutations) {
+        const searchInput = document.getElementById("searchInput");
+        const resultsBox = document.getElementById("searchResults");
+        const clearBtn = document.getElementById("clearSearch");
+        
+        if (searchInput && resultsBox && clearBtn && !searchInput.dataset.initialized) {
+            initStudentSearch();
+        }
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+}
 
 document.querySelectorAll(".clickable-row").forEach(row => {
     row.addEventListener("click", () => {
@@ -8,7 +29,6 @@ document.querySelectorAll(".clickable-row").forEach(row => {
         window.location.href = "view_student.php?id=" + studentId;
     });
 });
-
 
 function toggleNotifications() {
     const dropdown = document.getElementById("notificationDropdown");
@@ -67,9 +87,18 @@ links.forEach(link => {
                 if(page.includes('treatment')){
                     initTreatmentPage();
                 }
+                 if(page.includes('student_list')){
+                    initStudentSearch();
+                }
                 if(page.includes('medication')){
                    initMedicationPage();
                 }
+                 if(page.includes('appointment')){
+                    fetchAppointments();
+                    setInterval(fetchAppointments, 5000);
+                }
+                if(page.includes('student_list')){
+                    initStudentPage();                 }
     
             })
             .catch(err => {
@@ -86,39 +115,88 @@ function fetchAppointments() {
     .then(data => {
         const table = document.getElementById('appointmentsTable');
         table.innerHTML = '';
+
         data.forEach(a => {
+            const statusText = a.status.charAt(0).toUpperCase() + a.status.slice(1);
+
+            let buttons = '';
+            if(a.status === 'pending') {
+                buttons = `
+                    <button class="btn confirm" onclick="updateStatus(${a.appointment_id}, 'confirmed', ${a.student_id})">Confirm</button>
+                    <button class="btn reject" onclick="updateStatus(${a.appointment_id}, 'rejected', ${a.student_id})">Reject</button>
+                `;
+            } else if(a.status === 'confirmed' && a.can_reschedule) {
+                buttons = `
+                    <button class="btn reschedule" onclick="rescheduleAppointment(${a.appointment_id}, ${a.student_id}, '${a.appointment_date}')">Reschedule</button>
+                `;
+            } else {
+                buttons = '-';
+            }
+
             table.innerHTML += `
-            <tr id="appointment-${a.appointment_id}">
-                <td>${a.student_name}</td>
-                <td>${a.appointment_date}</td>
-                <td>${a.reason}</td>
-                <td><span class="status ${a.status}">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span></td>
-                <td>
-                    ${a.status === 'pending' ? `
-                        <button class="btn confirm" onclick="updateStatus(${a.appointment_id}, 'confirmed', ${a.student_id})">Confirm</button>
-                        <button class="btn reject" onclick="updateStatus(${a.appointment_id}, 'rejected', ${a.student_id})">Reject</button>
-                    ` : '-'}
-                </td>
-            </tr>`;
+                <tr id="appointment-${a.appointment_id}">
+                    <td>${a.student_name}</td>
+                    <td>${a.appointment_date}</td>
+                    <td>${a.reason}</td>
+                    <td><span class="status ${a.status}">${statusText}</span></td>
+                    <td>${buttons}</td>
+                </tr>
+            `;
         });
     });
 }
 
-function updateStatus(appointmentId, status, studentId) {
-    if(!confirm(`Are you sure you want to ${status} this appointment?`)) return;
+function updateStatus(appointmentId, action, studentId) {
+    if(!confirm(`Are you sure you want to ${action} this appointment?`)) return;
 
-    fetch('update_appointment.php', {
+    fetch('/Mwaka.SHRS.2/nurse/update_appointment.php', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({appointment_id:appointmentId, status:status, student_id:studentId})
+        body: JSON.stringify({appointment_id: appointmentId, status: action})
     })
-    .then(res=>res.json())
-    .then(data=>{
+    .then(res => res.json())
+    .then(data => {
         if(data.success) fetchAppointments();
-        else alert('Error: '+data.message);
+        else alert('Error: ' + data.message);
     });
 }
 
+// Handle rescheduling
+function rescheduleAppointment(appointmentId, studentId, currentDate) {
+    const modal = document.getElementById('rescheduleModal');
+    const closeBtn = modal.querySelector('.close');
+
+    document.getElementById('appointmentId').value = appointmentId;
+    document.getElementById('studentId').value = studentId;
+    document.getElementById('newDate').value = currentDate.replace(' ', 'T');
+
+    modal.style.display = 'block';
+
+    closeBtn.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; };
+
+    const form = document.getElementById('rescheduleForm');
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        const newDate = document.getElementById('newDate').value;
+
+        fetch('/Mwaka.SHRS.2/nurse/update_appointment.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ appointment_id: appointmentId, status: 'reschedule', new_date: newDate })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                alert('Appointment rescheduled!');
+                modal.style.display = 'none';
+                fetchAppointments();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        });
+    };
+}
 function loadNotifications() {
     const dropdownList = document.querySelector("#notificationDropdown ul");
     const pageBox = document.getElementById("notifications");
@@ -167,12 +245,9 @@ function loadNotifications() {
         .catch(err => console.error("Error fetching notifications:", err));
 }
 
-setInterval(fetchAppointments, 5000);
-fetchAppointments();
 
 // treatment.php js
 function initTreatmentPage(){
-
 const studentName = document.getElementById("student_name");
 const studentId = document.getElementById("student_id");
 const course = document.getElementById("course");
@@ -231,7 +306,6 @@ window.addRow = function(){
     table.appendChild(row);
 }
 
-
 window.loadHistory = function(student_id){
 
     fetch("get_history.php?id="+student_id)
@@ -253,9 +327,7 @@ window.loadHistory = function(student_id){
 
 }
 
-
 const form = document.getElementById("treatmentForm");
-
 if(form){
 form.addEventListener("submit", function(e){
 
@@ -299,11 +371,8 @@ form.addEventListener("submit", function(e){
 
 }
 //medication.php
-
 function initMedicationPage(){
-
     setInterval(()=> location.reload(), 120000);
-
     const showBtn = document.getElementById("showAddMedication");
     const closeBtn = document.getElementById("closeModal");
     const modal = document.getElementById("addMedicationModal");
@@ -323,4 +392,129 @@ function initMedicationPage(){
             modal.style.display = "none";
         }
     }
+}
+//searching js
+function initStudentSearch() {
+    const searchInput = document.getElementById("searchInput");
+    const resultsBox = document.getElementById("searchResults");
+    const clearBtn = document.getElementById("clearSearch");
+
+    console.log("Search elements found:", {
+        searchInput: !!searchInput,
+        resultsBox: !!resultsBox,
+        clearBtn: !!clearBtn
+    });
+
+    if (!searchInput || !resultsBox || !clearBtn) {
+        console.warn("Search elements not found in DOM");
+        return;
+    }
+    
+    if (searchInput.dataset.initialized === "true") {
+        console.log("Search already initialized");
+        return;
+    }
+    
+    console.log("Initializing search...");
+    searchInput.dataset.initialized = "true";
+
+    let timeout = null;
+
+    searchInput.addEventListener("input", () => {
+        clearBtn.style.display = searchInput.value ? "block" : "none";
+    });
+
+    clearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        resultsBox.style.display = "none";
+        resultsBox.innerHTML = "";
+        clearBtn.style.display = "none";
+        searchInput.focus();
+    });
+
+    searchInput.addEventListener("keyup", (e) => {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            const query = searchInput.value.trim();
+            console.log("Searching for:", query);
+
+            if (query.length < 2) {
+                resultsBox.style.display = "none";
+                return;
+            }
+            
+            const searchUrl = "search.php?q=" + encodeURIComponent(query);
+            console.log("Fetching URL:", searchUrl);
+            
+            fetch(searchUrl)
+                .then(res => {
+                    console.log("Response status:", res.status);
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Received data:", data);
+                    resultsBox.innerHTML = "";
+
+                    if (!Array.isArray(data)) {
+                        console.error("Data is not an array:", data);
+                        resultsBox.innerHTML = "<div>Error: Invalid response format</div>";
+                        resultsBox.style.display = "block";
+                        return;
+                    }
+
+                    if (data.length === 0) {
+                        resultsBox.innerHTML = "<div class='no-results'>No results found</div>";
+                        resultsBox.style.display = "block";
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const div = document.createElement("div");
+                        div.className = "search-result-item";
+                        const displayName = item.full_name || item.name || "No name";
+                        div.textContent = `[${item.type}] ${displayName}`;
+                        div.style.cursor = "pointer";
+                        div.style.padding = "10px";
+                        div.style.borderBottom = "1px solid #eee";
+                        
+                        div.onclick = () => {
+                            console.log("Clicked item:", item);
+                            if (item.type === "student") {
+                                window.location.href = `view_student.php?id=${item.id}`;
+                            } 
+                            else if (item.type === "appointment" || item.type === "status") {
+                                window.location.href = `appointment.php?id=${item.id}`;
+                            } 
+                            else if (item.type === "doctor" || item.type === "nurse") {
+                                window.location.href = `prescription.php?id=${item.id}`;
+                            } 
+                            else if (item.type === "notification") {
+                                window.location.href = `notifications.php`;
+                            }
+                        };
+                        
+                        div.addEventListener("mouseenter", () => {
+                            div.style.backgroundColor = "#f5f5f5";
+                        });
+                        div.addEventListener("mouseleave", () => {
+                            div.style.backgroundColor = "white";
+                        });
+                        
+                        resultsBox.appendChild(div);
+                    });
+
+                    resultsBox.style.display = "block";
+                })
+                .catch(err => {
+                    console.error("Fetch error:", err);
+                    resultsBox.innerHTML = "<div class='error-message'>Error loading results. Please try again.</div>";
+                    resultsBox.style.display = "block";
+                });
+
+        }, 400);
+    });
 }

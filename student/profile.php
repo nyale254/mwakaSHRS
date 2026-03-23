@@ -59,20 +59,7 @@ if (!empty($student['profile_photo']) &&
 </head>
 <body>
 
-<div class="topbar">
-    <h2>SHRS</h2>
-    <div class="topbar-right">
-        <span>Welcome <?= htmlspecialchars($student['full_name']) ?></span>
-        <a href="/Mwaka.SHRS.2/student/dashboard.php" class="back_btn">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
-                <path d="M440-240 200-480l240-240 56 56-183 184 183 184-56 56Zm264 0L464-480l240-240 56 56-183 184 183 184-56 56Z"/>
-            </svg>
-            Back</a>
-        <a href="/Mwaka.SHRS.2/logout.php" class="logout">Logout</a>
-    </div>
-</div>
-
-<div class="container">
+<div class="profile-container">
 
   <?php
     $has_photo = !empty($student['profile_photo']) && 
@@ -112,7 +99,7 @@ if (!empty($student['profile_photo']) &&
 
     </div>
 
-    <div class="card">
+    <div class="profile-card">
         <h4>Personal Information</h4>
         <div class="grid">
              <p>
@@ -161,7 +148,7 @@ if (!empty($student['profile_photo']) &&
         </div>
     </div>
 
-    <div class="card">
+    <div class="profile-card">
         <h4>Academic Information</h4>
         <div class="grid">
             <p><strong>Course:</strong> <?= $student['course'] ?></p>
@@ -169,7 +156,7 @@ if (!empty($student['profile_photo']) &&
         </div>
     </div>
 
-    <div class="card highlight">
+    <div class="profile-card highlight">
         <h4>Health Information</h4>
         <div class="grid">
             <p>
@@ -202,6 +189,6 @@ if (!empty($student['profile_photo']) &&
     </div>
 </div>-->
 
-<script src="/Mwaka.SHRS.2/scripts/profile.js"></script>
+
 </body>
 </html>

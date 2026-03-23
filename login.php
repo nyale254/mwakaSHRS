@@ -28,6 +28,7 @@ if (isset($_POST["login"])) {
                 $_SESSION['fullname']  = $row['fullname'];
                 $_SESSION['role']      = $row['role'];
                 $_SESSION['user_id']   = $row['user_id'];
+                $_SESSION['student_id'] = $row['student_id'];
                 
                 $action = "Logging in";
                 $detail = "Logged in to the system: $user_id with treatment ID: $username";

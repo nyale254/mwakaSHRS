@@ -1,13 +1,15 @@
 <?php
 session_start();
 include "../connect.php";
-
+error_reporting(E_ERROR | E_PARSE);
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'nurse') {
     echo json_encode([]);
     exit();
 }
+
+$logged_in_nurse = $_SESSION['user_id'];
 
 $query = "
     SELECT 
@@ -16,6 +18,7 @@ $query = "
         a.appointment_date,
         a.reason,
         a.status,
+        a.nurse_id, 
         s.full_name AS student_name
     FROM appointments a
     JOIN students s ON a.student_id = s.student_id
@@ -32,7 +35,8 @@ while($row = mysqli_fetch_assoc($result)) {
         'appointment_date' => $row['appointment_date'],
         'reason' => $row['reason'],
         'status' => $row['status'],
-        'student_name' => $row['student_name']
+        'student_name' => $row['student_name'],
+        'can_reschedule' => ($row['status'] === 'confirmed' && $row['nurse_id'] == $logged_in_nurse)
     ];
 }
 

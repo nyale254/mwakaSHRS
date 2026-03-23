@@ -9,7 +9,20 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     exit();
 }
 
-$student_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
+
+$getStudent = mysqli_prepare($conn, "SELECT student_id FROM students WHERE user_id=?");
+mysqli_stmt_bind_param($getStudent, "i", $user_id);
+mysqli_stmt_execute($getStudent);
+$result = mysqli_stmt_get_result($getStudent);
+$row = mysqli_fetch_assoc($result);
+mysqli_stmt_close($getStudent);
+
+if (!$row) {
+    echo json_encode([]);
+    exit();
+}
+$student_id = $row['student_id'];
 
 $query = "
     SELECT 

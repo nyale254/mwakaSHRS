@@ -6,7 +6,22 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     exit("Unauthorized");
 }
 
-$student_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
+
+$getStudent = mysqli_prepare($conn, "SELECT student_id FROM students WHERE user_id=?");
+mysqli_stmt_bind_param($getStudent, "i", $user_id);
+mysqli_stmt_execute($getStudent);
+$result = mysqli_stmt_get_result($getStudent);
+$row = mysqli_fetch_assoc($result);
+$student_id = $row ? $row['student_id'] : 0;
+mysqli_stmt_close($getStudent);
+
+$notifQuery = mysqli_query($conn, "
+    SELECT * FROM notifications 
+    WHERE user_id = '$user_id'
+    ORDER BY created_at DESC
+    LIMIT 5
+");
 ?>
 
 <div class="appointment-section">

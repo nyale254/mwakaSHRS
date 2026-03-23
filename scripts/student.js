@@ -144,7 +144,6 @@ function loadAppointments() {
 function initAppointmentPage() {
     loadAppointments();
     loadNotifications();
-    const closeBtn = modal.querySelector('.close');
     const form = document.getElementById("appointmentForm");
     if (!form) return;
 

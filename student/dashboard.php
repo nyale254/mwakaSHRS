@@ -7,14 +7,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
     exit();
 }
 
-$student_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
+
+$getStudent = mysqli_prepare($conn, "SELECT student_id FROM students WHERE user_id=?");
+mysqli_stmt_bind_param($getStudent, "i", $user_id);
+mysqli_stmt_execute($getStudent);
+$result = mysqli_stmt_get_result($getStudent);
+$row = mysqli_fetch_assoc($result);
+
+$student_id = $row ? $row['student_id'] : 0;
+
+mysqli_stmt_close($getStudent);
 
 $studentQuery = "SELECT user_id, fullname FROM users WHERE user_id = ?";
 $stmt = mysqli_prepare($conn, $studentQuery);
 if (!$stmt) {
     die("Prepare failed: " . mysqli_error($conn));
 }
-mysqli_stmt_bind_param($stmt, "i", $student_id);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $student = mysqli_fetch_assoc($result);
@@ -47,7 +57,7 @@ if ($appointmentsQuery) {
 }
 
 $notificationCount = 0;
-$notifQuery = "SELECT COUNT(*) count FROM notifications WHERE user_id = ? AND status = 'unread'";
+$notifQuery = "SELECT COUNT(*) count FROM notifications WHERE user_id = ? AND status = 0";
 $stmt2 = mysqli_prepare($conn, $notifQuery);
 if (!$stmt2) {
     die("Prepare failed for notifications: " . mysqli_error($conn));
@@ -83,7 +93,7 @@ mysqli_stmt_close($stmt2);
                         </svg>
                         Home
                     </a>
-                    <a href='profile.php'>
+                    <a href="#" data-page="/Mwaka.SHRS.2/student/profile.php">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f1e9e9">
                             <path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm296.5-343.5Q560-607 560-640t-23.5-56.5Q513-720 480-720t-56.5 23.5Q400-673 400-640t23.5 56.5Q447-560 480-560t56.5-23.5ZM480-640Zm0 400Z"/>
                         </svg>
@@ -119,8 +129,11 @@ mysqli_stmt_close($stmt2);
                         </svg>
                         <span class="notification-badge" id="notificationBadge">
                             <?php 
-                            $notifCountQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM notifications
-                            WHERE user_id={$_SESSION['user_id']} AND status=0");
+                            $notifCountQuery = mysqli_query($conn, "
+                                SELECT COUNT(*) AS total 
+                                FROM notifications
+                                WHERE user_id='$user_id' AND status=0
+                            ");
                             $notifCount = mysqli_fetch_assoc($notifCountQuery)['total'];
                             echo $notifCount;
                             ?>
@@ -130,9 +143,12 @@ mysqli_stmt_close($stmt2);
                         <h4>Notifications</h4>
                         <ul>
                             <?php
-                            $notifQuery = mysqli_query($conn, "SELECT * FROM notifications 
-                            WHERE user_id={$_SESSION['user_id']} 
-                            ORDER BY created_at DESC LIMIT 5");
+                           $notifQuery = mysqli_query($conn, "
+                                SELECT * FROM notifications 
+                                WHERE user_id='$user_id' 
+                                ORDER BY created_at DESC 
+                                LIMIT 5
+                            ");
                             if(mysqli_num_rows($notifQuery) > 0) {
                                 while($notif = mysqli_fetch_assoc($notifQuery)) {
                                     $readClass = $notif['status'] ? 'read' : 'unread';
@@ -291,6 +307,7 @@ mysqli_stmt_close($stmt2);
 </div>
 
 <script src="/Mwaka.SHRS.2/scripts/student.js"></script>
+<script src="/Mwaka.SHRS.2/scripts/profile.js"></script>
 
 </body>
 </html>

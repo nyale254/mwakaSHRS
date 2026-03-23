@@ -8,8 +8,8 @@ class SMSService {
     private $sms;
 
     public function __construct(){
-        $username = "sandbox";
-        $apiKey   = "atsk_1d85ec6c26bf0b9922b68a862f70e0c52aa7f1a242c9ff13ee08f7c2a62b76a5943ae60d
+        $username = "nyale2254";
+        $apiKey   = "atsk_eb86a49ea3b2451607488d48fd4141d1de675367a197d42e33e719bc52427ed0e16bc8ff 
 
 ";
 

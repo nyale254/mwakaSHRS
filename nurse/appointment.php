@@ -31,6 +31,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'nurse') {
         <tbody id="appointmentsTable"></tbody>
     </table>
 </div>
-
+<div id="rescheduleModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Reschedule Appointment</h3>
+    <form id="rescheduleForm">
+      <label for="newDate">New Date & Time:</label>
+      <input type="datetime-local" id="newDate" name="newDate" required>
+      <input type="hidden" id="appointmentId">
+      <input type="hidden" id="studentId">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>

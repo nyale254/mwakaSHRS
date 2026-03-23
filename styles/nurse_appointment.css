@@ -1,6 +1,4 @@
-/* ===============================
-   GLOBAL RESET
-================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -14,9 +12,6 @@ body {
     padding: 40px;
 }
 
-/* ===============================
-   CONTAINER
-================================= */
 .table_container {
     background: #ffffff;
     padding: 30px;
@@ -35,9 +30,6 @@ body {
     padding-left: 12px;
 }
 
-/* ===============================
-   TABLE STYLING
-================================= */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -80,27 +72,20 @@ tbody td {
     text-transform: capitalize;
 }
 
-/* Pending */
 .status.pending {
     background: #fff7ed;
     color: #ea580c;
 }
 
-/* Confirmed */
 .status.confirmed {
     background: #ecfdf5;
     color: #16a34a;
 }
-
-/* Rejected */
 .status.rejected {
     background: #fef2f2;
     color: #dc2626;
 }
 
-/* ===============================
-   BUTTONS
-================================= */
 .btn {
     padding: 6px 14px;
     border-radius: 6px;
@@ -131,9 +116,6 @@ tbody td {
     background: #b91c1c;
 }
 
-/* ===============================
-   RESPONSIVE
-================================= */
 @media (max-width: 768px) {
     body {
         padding: 15px;

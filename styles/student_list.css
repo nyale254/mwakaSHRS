@@ -1,176 +1,122 @@
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-}
-
+/* General body and container */
 body {
-    background-color: #f4f6f9;
-    color: #1f2933;
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6f8;
+    color: #333;
 }
 
-.topbar {
-    background-color: #1e293b;
-    color: #ffffff;
-    padding: 16px 30px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
+.list-container {
+    margin-top: -50px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.topbar h1 {
-    font-size: 20px;
-    font-weight: 600;
+.list-container h1 {
+    margin-bottom: 5px;
+    color: #1e3a8a;
 }
 
-.btn1,
-.btn2 {
-    padding: 8px 14px;
-    font-size: 14px;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-left: 10px;
-    transition: background-color 0.2s ease;
+.list-container p {
+    margin-bottom: 20px;
+    color: #555;
 }
-
-.btn1 {
-    background-color: #2563eb;
-    color: #ffffff;
-}
-
-.btn1:hover {
-    background-color: #1d4ed8;
-}
-
-.btn2 {
-    background-color: #dc2626;
-    color: #ffffff;
-}
-
-.btn2:hover {
-    background-color: #b91c1c;
-}
-
-
 .filter-form {
     display: flex;
     gap: 10px;
-    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-.filter-form input {
+.filter-form input[type="text"] {
+    flex: 1;
     padding: 8px 12px;
-    width: 220px;
-    border-radius: 4px;
-    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    border: 1px solid #ccc;
     font-size: 14px;
 }
 
-
-.btn {
-    background-color: #2563eb;
-    color: #ffffff;
-    padding: 8px 14px;
-    border-radius: 4px;
-    font-size: 14px;
-    text-decoration: none;
+.filter-form button.btn,
+.filter-form a#btn-reset {
+    padding: 8px 16px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
 }
 
-.btn:hover {
-    background-color: #1d4ed8;
+.filter-form button.btn {
+    background-color: #1e3a8a;
+    color: #fff;
 }
 
-.btn.reset {
-    background-color: #64748b;
+.filter-form button.btn:hover {
+    background-color: #163070;
 }
 
-.btn.reset:hover {
-    background-color: #475569;
+.filter-form a.btn.reset {
+    background-color: #6c757d;
+    color: #fff;
 }
 
-.container {
-    max-width: 1100px;
-    margin: 30px auto;
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.filter-form a.btn.reset:hover {
+    background-color: #5a6268;
 }
 
-.container p {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #1e293b;
-}
-
+/* Table */
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
 table th,
 table td {
-    padding: 12px 14px;
+    padding: 12px 15px;
     text-align: left;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 table th {
-    background-color: #f1f5f9;
-    font-size: 14px;
+    background-color: #f1f3f5;
+    color: #1e3a8a;
     font-weight: 600;
-    border-bottom: 2px solid #e5e7eb;
 }
 
-table td {
-    font-size: 14px;
-    border-bottom: 1px solid #e5e7eb;
+table tr:hover {
+    background-color: #f0f4ff;
 }
 
 .clickable-row {
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
-.clickable-row:hover {
-    background-color: #f8fafc;
+.clickable-row td a.btn {
+    margin-right: 5px;
 }
 
-table td .btn {
-    padding: 6px 12px;
-    font-size: 13px;
+.btn.primary {
+    background-color: #2563eb;
+    color: #fff;
 }
 
-table tr td[colspan] {
-    text-align: center;
-    padding: 20px;
-    color: #64748b;
-    font-style: italic;
+.btn.primary:hover {
+    background-color: #1e4db7;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
-    .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .filter-form {
-        width: 100%;
-        flex-wrap: wrap;
+        flex-direction: column;
     }
 
-    .filter-form input {
-        width: 100%;
-    }
-
-    table {
+    table th, table td {
         font-size: 13px;
+        padding: 10px;
     }
 }

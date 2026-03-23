@@ -34,7 +34,7 @@ if(isset($_SESSION['user_id'])){
         <div class="contact-form">
             <h2>Send Message</h2>
 
-            <form action="send_message.php" method="POST">
+            <form action="../send_message.php" method="POST">
                 <div class="input-group">
                     <label>Full Name</label>
                     <input type="text" name="fullname" required>
