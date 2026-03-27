@@ -14,12 +14,13 @@ function initStudentList() {
         });
     });
 }
-export function initStudentSearch() {
+export function initStudentFilterSearch() {
     const form = document.querySelector(".filter-form");
-    const searchInput = form.querySelector('input[name="search"]');
-    const resetBtn = document.getElementById("btn-reset");
 
     if (!form) return;
+    
+    const searchInput = form.querySelector('input[name="search"]');
+    const resetBtn = document.getElementById("btn-reset");
     form.addEventListener("submit", e => {
         e.preventDefault(); 
         const query = searchInput.value.trim();
@@ -44,5 +45,5 @@ export function initStudentSearch() {
 }
 export function initStudentPage() {
     initStudentList();
-    initStudentSearch();
+    initStudentFilterSearch();
 }

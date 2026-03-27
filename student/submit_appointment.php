@@ -8,6 +8,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     echo json_encode(['success'=>false, 'message'=>'Unauthorized']);
     exit();
 }
+
 $user_id = $_SESSION['user_id'];
 
 $res = mysqli_query($conn, "SELECT student_id FROM students WHERE user_id = $user_id");
@@ -27,8 +28,8 @@ if(!$appointment_date || !$reason){
     exit();
 }
 
-$stmt = mysqli_prepare($conn, "INSERT INTO appointments (student_id, appointment_date, reason) VALUES (?, ?, ?)");
-mysqli_stmt_bind_param($stmt, "iss", $student_id, $appointment_date, $reason);
+$stmt = mysqli_prepare($conn, "INSERT INTO appointments (user_id, appointment_date, reason) VALUES (?, ?, ?)");
+mysqli_stmt_bind_param($stmt, "iss", $user_id, $appointment_date, $reason);
 if(mysqli_stmt_execute($stmt)){
     $appointment_id = mysqli_insert_id($conn);
 

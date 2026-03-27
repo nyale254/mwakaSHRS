@@ -14,14 +14,14 @@ $logged_in_nurse = $_SESSION['user_id'];
 $query = "
     SELECT 
         a.appointment_id,
-        a.student_id,
+        a.user_id,
         a.appointment_date,
         a.reason,
         a.status,
         a.nurse_id, 
         s.full_name AS student_name
     FROM appointments a
-    JOIN students s ON a.student_id = s.student_id
+    JOIN students s ON a.user_id = s.user_id
     ORDER BY a.appointment_date ASC
 ";
 
@@ -31,7 +31,7 @@ $appointments = [];
 while($row = mysqli_fetch_assoc($result)) {
     $appointments[] = [
         'appointment_id' => (int)$row['appointment_id'],
-        'student_id' => (int)$row['student_id'],
+        'user_id' => (int)$row['user_id'],
         'appointment_date' => $row['appointment_date'],
         'reason' => $row['reason'],
         'status' => $row['status'],

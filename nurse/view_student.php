@@ -14,7 +14,6 @@ if (!$conn) {
     die("Database connection failed");
 }
 
-
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     echo "<script>
             alert('No student selected.');
@@ -70,8 +69,7 @@ $visitResult = mysqli_stmt_get_result($visitStmt);
         <header class="topbar">
             <h1>Student Health Profile</h1>
             <div>
-                <a href="dashboard.php" class="primary_btn">Dashboard</a>
-                <a href="../logout.php" class= "secondary_btn">Logout</a>
+                <a href="javascript:history.back()" class="primary_btn">Back</a>
                 <a href="print_medic_report.php?id=<?= $student_id ?>" 
                     class="btn" target="_blank">
                     Print Medical Report (PDF)
@@ -89,8 +87,8 @@ $visitResult = mysqli_stmt_get_result($visitStmt);
             <p><strong>Blood Group:</strong> <?= htmlspecialchars($student['blood_type']) ?></p>
 
             <br>
-            <a href="treatment.php?id=<?= $student_id ?>" class="btn">Add Treatment</a>
         </section>
+
         <section class="table-section">
             <h2>Medical History</h2>
 

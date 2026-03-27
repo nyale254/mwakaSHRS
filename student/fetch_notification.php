@@ -4,7 +4,6 @@ include "../connect.php";
 
 header('Content-Type: application/json');
 
-// Only allow students
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     echo json_encode([]);
     exit();
@@ -38,7 +37,6 @@ if (!$userRow) {
 
 $student_user_id = $userRow['user_id'];
 
-// Fetch the 5 most recent notifications for this student
 $stmt = mysqli_prepare($conn, "
     SELECT notification_id, message, status, created_at 
     FROM notifications 

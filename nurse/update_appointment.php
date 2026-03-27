@@ -14,15 +14,17 @@ $user_id = $_SESSION['user_id'];
 $input = json_decode(file_get_contents('php://input'), true);
 $appointment_id = $input['appointment_id'] ?? 0;
 $status = $input['status'] ?? ''; 
-$new_date = $input['new_date'] ?? null; 
+$new_date = $input['new_date'] ?? null;
+$std_id = $input['user_id'] ?? 0;
+
 
 if(!$appointment_id || !in_array($status, ['confirmed', 'rejected', 'reschedule'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
     exit();
 }
 
-$getStudent = mysqli_prepare($conn, "SELECT student_id FROM appointments WHERE appointment_id=?");
-mysqli_stmt_bind_param($getStudent, "i", $appointment_id);
+$getStudent = mysqli_prepare($conn, "SELECT user_id FROM students WHERE user_id=?");
+mysqli_stmt_bind_param($getStudent, "i", $std_id);
 mysqli_stmt_execute($getStudent);
 $result = mysqli_stmt_get_result($getStudent);
 $row = mysqli_fetch_assoc($result);
@@ -33,7 +35,7 @@ if(!$row){
     exit();
 }
 
-$student_id = $row['student_id'];
+$student_user_id = $row['user_id'];
 mysqli_begin_transaction($conn);
 
 try {
@@ -61,7 +63,7 @@ try {
 
         $msg = $status === 'confirmed' ? "Your appointment has been confirmed." : "Your appointment has been rejected.";
         $notify = mysqli_prepare($conn, "INSERT INTO notifications (user_id, type, message) VALUES (?, 'appointment', ?)");
-        mysqli_stmt_bind_param($notify, "is", $student_id, $msg);
+        mysqli_stmt_bind_param($notify, "is", $student_user_id, $msg);
         mysqli_stmt_execute($notify);
         mysqli_stmt_close($notify);
 
@@ -86,7 +88,7 @@ try {
 
         $msg = "Your appointment has been rescheduled to $new_date.";
         $notify = mysqli_prepare($conn, "INSERT INTO notifications (user_id, type, message) VALUES (?, 'appointment', ?)");
-        mysqli_stmt_bind_param($notify, "is", $student_id, $msg);
+        mysqli_stmt_bind_param($notify, "is", $student_user_id, $msg);
         mysqli_stmt_execute($notify);
         mysqli_stmt_close($notify);
     }
@@ -100,7 +102,7 @@ try {
         $stmt3 = mysqli_prepare($conn, "
             SELECT s.full_name AS student_name, s.email AS student_email, a.appointment_date
             FROM appointments a
-            JOIN students s ON a.student_id = s.student_id
+            JOIN students s ON a.user_id = s.user_id
             WHERE a.appointment_id = ?
         ");
         mysqli_stmt_bind_param($stmt3, "i", $appointment_id);

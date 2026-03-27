@@ -154,7 +154,7 @@ mysqli_stmt_close($stmt);
                         a.status, 
                         a.reason
                     FROM appointments a
-                    JOIN students s ON a.student_id = s.student_id
+                    JOIN students s ON a.user_id = s.user_id
                     LEFT JOIN vaccinations v ON a.appointment_id = v.appointment_id
                     WHERE a.reason = ? 
                     ORDER BY a.updated_at ASC

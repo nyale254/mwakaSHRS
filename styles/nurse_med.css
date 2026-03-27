@@ -256,74 +256,135 @@ body {
     border-radius: 12px;
     font-size: 13px;
 }
+#showAddMedication {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 30%;
+}
 .addmedic {
-    display: none; 
+    display: none;
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
-
 #addMedicationFormContainer {
-    background: #ffffff;
-    padding: 30px;
-    width: 400px;
+    background: #fff;
+    padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    width: 95%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
-}
-
-#addMedicationFormContainer h2 {
-    margin-bottom: 20px;
-    color: #1e3a8a;
-}
-
-#addMedicationFormContainer input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-#addMedicationFormContainer input:focus {
-    outline: none;
-    border-color: #1e3a8a;
 }
 
 .close-btn {
     position: absolute;
-    top: 12px;
     right: 15px;
-    font-size: 20px;
+    top: 10px;
+    font-size: 22px;
     cursor: pointer;
-    color: #999;
+    color: #555;
 }
 
 .close-btn:hover {
     color: red;
 }
-#showAddMedication {
-    background: #1e81c4;
-    color: white;
-    padding: 10px 2px;
+
+#addMedicationFormContainer h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#medTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+#medTable th {
+    background: #2c3e50;
+    color: #fff;
+    padding: 10px;
     font-size: 14px;
-    border-radius: 8px;
+}
+
+#medTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+#medTable input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+#medTable button {
+    background: #e74c3c;
     border: none;
+    color: #fff;
+    padding: 5px 8px;
+    border-radius: 5px;
     cursor: pointer;
-    width: 200px;
-    display: inline-block;   
-    text-align: center; 
-    margin: 0; 
 }
 
-#showAddMedication:hover {
-    background: #1665a2;
+#medTable button:hover {
+    background: #c0392b;
 }
 
+/* Add button */
+#addRowBtn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#addRowBtn:hover {
+    background: #2980b9;
+}
+
+button[type="submit"] {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background: #27ae60;
+}
+
+@media (max-width: 768px) {
+    #medTable th, 
+    #medTable td {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    #addMedicationFormContainer {
+        padding: 10px;
+    }
+}
 @media(max-width: 900px){
     .content-grid {
         grid-template-columns: 1fr;

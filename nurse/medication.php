@@ -44,7 +44,6 @@ $authResult = mysqli_query($conn, $authQuery);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHRS · Medication Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/nurse_med.css">
 </head>
 <body>
 <div class="dashboard">
@@ -152,13 +151,37 @@ $authResult = mysqli_query($conn, $authQuery);
             <span class="close-btn" id="closeModal">&times;</span>
             <h2>Add New Medication</h2>
             <?php if(isset($success_msg)) echo "<p style='color:green;'>$success_msg</p>"; ?>
-            <form method="POST">
-                <input type="text" name="med_name" placeholder="Medication Name" required>
-                <input type="text" name="dosage" placeholder="Dosage (e.g., 10mg, 2 puffs)" required>
-                <input type="number" name="quantity" placeholder="Quantity" required>
-                <input type="number" name="reorder_level" placeholder="Reorder Level" required>
-                <input type="date" name="expiry_date" required>
-                <button type="submit" name="add_medication" class="btn primary_btn">Add Medication</button>
+            <form method="POST" action="add_medication.php" id="medForm">
+                <table id="medTable">
+                    <tr>
+                        <th>Name</th>
+                        <th>Dosage</th>
+                        <th>Qty</th>
+                        <th>Max</th>
+                        <th>Reorder</th>
+                        <th>Supplier</th>
+                        <th>Batch</th>
+                        <th>Storage</th>
+                        <th>Expiry</th>
+                        <th>Action</th>
+                    </tr>
+
+                    <tr>
+                        <td><input type="text" name="med_name[]" placeholder="Medication Name (e.g., Aspirin)" required></td>
+                        <td><input type="text" name="dosage[]"  placeholder="Dosage (e.g., 10mg)" required></td>
+                        <td><input type="number" name="quantity[]" placeholder="Quantity" required></td>
+                        <td><input type="number" name="max_stock_level[]" placeholder="Max Stock Level" required></td>
+                        <td><input type="number" name="reorder_level[]" placeholder="Reorder Level" required></td>
+                        <td><input type="text" name="supplier[]" placeholder="Supplier (e.g., ABC Pharma)" required></td>
+                        <td><input type="text" name="batch_number[]" placeholder="Batch Number (e.g., B12345)" required></td>
+                        <td><input type="text" name="storage_location[]" placeholder="Storage Location (e.g., Shelf A)" required></td>
+                        <td><input type="date" name="expiry_date[]" required></td>
+                        <td><button type="button" >❌</button></td>
+                    </tr>
+                </table>
+
+                <button type="button" id="addRowBtn">+ Add More</button>
+                <button type="submit" name="add_medication">Save All</button>
             </form>
         </div>
     </div>

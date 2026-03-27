@@ -8,7 +8,6 @@ include "../connect.php";
 <meta charset="UTF-8">
 <title>Nurse Treatment | SHRS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 body{background:#f5f7fb;}
@@ -57,6 +56,7 @@ body{background:#f5f7fb;}
                     <th>Medication</th>
                     <th>Dosage</th>
                     <th>Frequency</th>
+                    <th>Quantity</th>
                     <th>Action</th>
                     </tr>
                     </thead>

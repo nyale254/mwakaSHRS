@@ -61,10 +61,10 @@ $result = mysqli_query($conn, $query);
                     <td>".$row['reg_no']."</td>
                     <td>".$row['gender']."</td>
                     <td>".$row['course']."</td>
-                    <td>
-                        <a href='view_student.php?id=".$row['student_id']."' class='btn'>View</a>
-                        <a href='treatment.php?id=".$row['student_id']."' class='btn primary'>Treat</a>
-                    </td>
+                   <td>
+                        <a href='view_student.php?id=" . $row['student_id'] . "' class='btn load-page'>View</a>
+                        <a href='treatment.php?id=" . $row['student_id'] . "' class='btn load-page'>Treat</a>
+                    </td>      
                 </tr>";
 
             }

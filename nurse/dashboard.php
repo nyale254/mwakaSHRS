@@ -21,6 +21,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'nurse') {
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+
 $studentsResult = mysqli_query($conn, "SELECT COUNT(*) AS total FROM students");
 $totalStudents = mysqli_fetch_assoc($studentsResult)['total'];
 
@@ -46,6 +48,9 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
     <title>Nurse Dashboard | SHRS</title>
     <link rel="stylesheet" href="../styles/nurse_dashboard.css">
     <link rel="stylesheet" href="../styles/student_list.css">
+    <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/nurse_med.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <body>
@@ -141,7 +146,7 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
                 </div>
 
                 <div class="header-right">
-                    <button class="icon-btn" id ="notification-btn" onclick="toggleNotifications()">
+                    <button class="icon-btn" id ="notification-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -237,7 +242,7 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
                                     MAX(a.appointment_date) AS last_visit,
                                     s.status
                                 FROM students s
-                                LEFT JOIN appointments a ON s.student_id = a.student_id
+                                LEFT JOIN appointments a ON s.user_id = a.user_id
                                 LEFT JOIN conditions_allergies c ON s.student_id = c.student_id
                                 GROUP BY s.student_id
                                 ORDER BY last_visit DESC
@@ -286,7 +291,7 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
                     $recentQuery = "
                         SELECT a.appointment_date, a.reason, s.full_name, s.reg_no
                         FROM appointments a
-                        JOIN students s ON a.student_id = s.student_id
+                        JOIN students s ON a.user_id = s.user_id
                         ORDER BY a.appointment_date DESC
                         LIMIT 5
                     ";
@@ -316,8 +321,8 @@ $todayTreatments = mysqli_fetch_assoc($treatmentsResult)['total'];
     </main>
 </div>
 
-<script src="/Mwaka.SHRS.2/scripts/nurse_dashboard.js"></script>
-<script src="/Mwaka.SHRS.2/scripts/profile.js"></script>
+<script type="module" src="/Mwaka.SHRS.2/scripts/nurse_dashboard.js"></script>
+<!--<script src="/Mwaka.SHRS.2/scripts/profile.js"></script>-->
 
 </body>
 </html>

@@ -1,10 +1,17 @@
 setTimeout(() => {
     location.reload();
 }, 90000000);
+
+import { initStudentFilterSearch, initStudentPage } from './profile.js';
 document.addEventListener("DOMContentLoaded", function() {
     initStudentSearch();
     loadNotifications(); 
     setupSearchObserver();
+
+    const btn = document.getElementById("notification-btn");
+    if (btn) {
+        btn.addEventListener("click", toggleNotifications);
+    }
 });
 
 function setupSearchObserver() {
@@ -23,16 +30,17 @@ function setupSearchObserver() {
     });
 }
 
-document.querySelectorAll(".clickable-row").forEach(row => {
+/*document.querySelectorAll(".clickable-row").forEach(row => {
     row.addEventListener("click", () => {
         const studentId = row.getAttribute("data-id");
         window.location.href = "view_student.php?id=" + studentId;
     });
-});
+});*/
 
 function toggleNotifications() {
     const dropdown = document.getElementById("notificationDropdown");
     const badge = document.getElementById("notificationBadge");
+
     if (!dropdown) return;
 
     dropdown.classList.toggle("show");
@@ -63,49 +71,42 @@ document.addEventListener("click", function (e) {
     }
 });
 
-const links = document.querySelectorAll('.nav-link');
 const content = document.getElementById('main-content');
 
-links.forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('.nav-link, [data-page], .load-page');
+    if (!link) return;
 
-        links.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
+    const page = link.dataset.page || link.getAttribute('href');
+    if (!page) return;
 
-        const page = this.getAttribute('data-page');
+    e.preventDefault(); 
 
-        fetch(page)
-            .then(response => response.text())
-            .then(html => {
-                content.innerHTML = html;
+    if (link.classList.contains('nav-link')) {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+    }
+    fetch(page)
+        .then(response => response.text())
+        .then(html => {
+            content.innerHTML = html;
 
-                if(page.includes('dashboard')) {
-                    initDashboardChart(); 
-                }
-
-                if(page.includes('treatment')){
-                    initTreatmentPage();
-                }
-                 if(page.includes('student_list')){
-                    initStudentSearch();
-                }
-                if(page.includes('medication')){
-                   initMedicationPage();
-                }
-                 if(page.includes('appointment')){
-                    fetchAppointments();
-                    setInterval(fetchAppointments, 5000);
-                }
-                if(page.includes('student_list')){
-                    initStudentPage();                 }
-    
-            })
-            .catch(err => {
-                content.innerHTML = "<p>Error loading page.</p>";
-                console.error(err);
-            });
-    });
+            if (page.includes('dashboard')) initDashboardChart();
+            if (page.includes('treatment')) initTreatmentPage();
+            if (page.includes('student_list')) {
+                initStudentSearch();
+                initStudentPage();
+            }
+            if (page.includes('medication')) initMedicationPage();
+            if (page.includes('appointment')) {
+                fetchAppointments();
+                setInterval(fetchAppointments, 5000);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            content.innerHTML = "<p>Error loading page.</p>";
+        });
 });
 
 /*appointment.php js*/
@@ -122,12 +123,12 @@ function fetchAppointments() {
             let buttons = '';
             if(a.status === 'pending') {
                 buttons = `
-                    <button class="btn confirm" onclick="updateStatus(${a.appointment_id}, 'confirmed', ${a.student_id})">Confirm</button>
-                    <button class="btn reject" onclick="updateStatus(${a.appointment_id}, 'rejected', ${a.student_id})">Reject</button>
+                    <button class="btn confirm" onclick="updateStatus(${a.appointment_id}, 'confirmed', ${a.user_id})">Confirm</button>
+                    <button class="btn reject" onclick="updateStatus(${a.appointment_id}, 'rejected', ${a.user_id})">Reject</button>
                 `;
             } else if(a.status === 'confirmed' && a.can_reschedule) {
                 buttons = `
-                    <button class="btn reschedule" onclick="rescheduleAppointment(${a.appointment_id}, ${a.student_id}, '${a.appointment_date}')">Reschedule</button>
+                    <button class="btn reschedule" onclick="rescheduleAppointment(${a.appointment_id}, ${a.user_id}, '${a.appointment_date}')">Reschedule</button>
                 `;
             } else {
                 buttons = '-';
@@ -146,13 +147,13 @@ function fetchAppointments() {
     });
 }
 
-function updateStatus(appointmentId, action, studentId) {
+window.updateStatus = function(appointmentId, action, studentId) {
     if(!confirm(`Are you sure you want to ${action} this appointment?`)) return;
 
     fetch('/Mwaka.SHRS.2/nurse/update_appointment.php', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({appointment_id: appointmentId, status: action})
+        body: JSON.stringify({appointment_id: appointmentId, status: action, user_id: studentId})
     })
     .then(res => res.json())
     .then(data => {
@@ -162,7 +163,7 @@ function updateStatus(appointmentId, action, studentId) {
 }
 
 // Handle rescheduling
-function rescheduleAppointment(appointmentId, studentId, currentDate) {
+window.rescheduleAppointment = function(appointmentId, studentId, currentDate) {
     const modal = document.getElementById('rescheduleModal');
     const closeBtn = modal.querySelector('.close');
 
@@ -183,7 +184,7 @@ function rescheduleAppointment(appointmentId, studentId, currentDate) {
         fetch('/Mwaka.SHRS.2/nurse/update_appointment.php', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ appointment_id: appointmentId, status: 'reschedule', new_date: newDate })
+            body: JSON.stringify({ appointment_id: appointmentId, status: 'reschedule', new_date: newDate, user_id: studentId })
         })
         .then(res => res.json())
         .then(data => {
@@ -300,6 +301,7 @@ window.addRow = function(){
     <td><input name="medication[]" class="form-control"></td>
     <td><input name="prescribed_dosage[]" class="form-control"></td>
     <td><input name="frequency[]" class="form-control"></td>
+    <td><input type="number" name="quantity[]" class="form-control" required></td>
     <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Remove</button></td>
     `;
 
@@ -330,9 +332,7 @@ window.loadHistory = function(student_id){
 const form = document.getElementById("treatmentForm");
 if(form){
 form.addEventListener("submit", function(e){
-
     e.preventDefault();
-
     const formData = new FormData(this);
 
     fetch("save_treat.php",{
@@ -356,7 +356,7 @@ form.addEventListener("submit", function(e){
 
         }else{
 
-            Swal.fire({
+            window.Swal.fire({
                 icon:'error',
                 title:'Error',
                 text:data
@@ -376,6 +376,7 @@ function initMedicationPage(){
     const showBtn = document.getElementById("showAddMedication");
     const closeBtn = document.getElementById("closeModal");
     const modal = document.getElementById("addMedicationModal");
+    const addBtn = document.getElementById("addRowBtn");
 
     if(!showBtn) return;
 
@@ -392,7 +393,63 @@ function initMedicationPage(){
             modal.style.display = "none";
         }
     }
+
+    if (addBtn) {
+        addBtn.addEventListener("click", addMedicationRow);
+    }
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const expiryInput = document.getElementById("expiry_date");
+    const statusText = document.getElementById("statusText");
+    const statusInput = document.getElementById("status");
+
+    if (expiryInput && statusText && statusInput) {
+        function updateStatus() {
+            const selectedDate = new Date(expiryInput.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+                statusText.innerText = "Expired";
+                statusInput.value = "expired";
+            } else {
+                statusText.innerText = "Valid";
+                statusInput.value = "valid";
+            }
+        }
+
+        expiryInput.addEventListener("change", updateStatus);
+        if (expiryInput.value) updateStatus();
+    }
+});
+
+window.addMedicationRow = function() {
+    let table = document.getElementById("medTable");
+
+    if (!table) return;
+
+    let row = table.insertRow();
+
+    row.innerHTML = `
+        <td><input type="text" name="med_name[]" required></td>
+        <td><input type="text" name="dosage[]" required></td>
+        <td><input type="number" name="quantity[]" required></td>
+        <td><input type="number" name="max_stock_level[]" required></td>
+        <td><input type="number" name="reorder_level[]" required></td>
+        <td><input type="text" name="supplier[]" required></td>
+        <td><input type="text" name="batch_number[]" required></td>
+        <td><input type="text" name="storage_location[]" required></td>
+        <td><input type="date" name="expiry_date[]" required></td>
+        <td><button type="button" class="remove-btn">❌</button></td>
+    `;
+}
+
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("remove-btn")) {
+        e.target.closest("tr").remove();
+    }
+});
+
 //searching js
 function initStudentSearch() {
     const searchInput = document.getElementById("searchInput");

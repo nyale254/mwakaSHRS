@@ -5,12 +5,10 @@ include "../connect.php";
 
 use Dompdf\Dompdf;
 
-
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'nurse') {
     header("Location: ../index.php");
     exit();
 }
-
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("No student selected.");
@@ -62,7 +60,7 @@ th, td { padding:6px; font-size:12px; }
 <tr><td><strong>Gender:</strong></td><td>'.$student['gender'].'</td></tr>
 <tr><td><strong>Course:</strong></td><td>'.$student['course'].'</td></tr>
 <tr><td><strong>Date of Birth:</strong></td><td>'.$student['DoB'].'</td></tr>
-<tr><td><strong>Blood Group:</strong></td><td>'.$student['blood_group'].'</td></tr>
+<tr><td><strong>Blood Group:</strong></td><td>'.$student['blood_type'].'</td></tr>
 </table>
 
 <h3>Medical History</h3>
@@ -97,4 +95,8 @@ $dompdf = new Dompdf();
 $dompdf->loadHtml($html);
 $dompdf->setPaper("A4", "portrait");
 $dompdf->render();
+
+ob_clean();
+
 $dompdf->stream("Medical_Report_".$student['reg_no'].".pdf", ["Attachment" => false]);
+exit();

@@ -1,13 +1,13 @@
 <?php
-session_start();
+/*session_start();
 include "connect.php";
 
 header('Content-Type: application/json');
 
-/*if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo json_encode(["success" => false, "message" => "Unauthorized"]);
     exit();
-}*/
+}
 
 // =====================
 // 1. STATS
@@ -121,7 +121,7 @@ echo json_encode([
     "records" => $records,
     "alerts" => $alerts,
     "last_updated" => date("Y-m-d H:i:s")
-]);
+]);*/
 ?>
 
 <!DOCTYPE html>
