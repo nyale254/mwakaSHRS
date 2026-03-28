@@ -55,37 +55,16 @@ mysqli_stmt_close($stmt);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SHRS | Nurse Vaccination Dashboard</title>
-<link rel="stylesheet" href="/Mwaka.SHRS.2/styles/vaccination.css">
 </head>
 
 <body>
-    <header class="topbar">
-        <div class="header-content">
-            <div class="logo-text">
-                <h1>SHRS| Nurse Vaccination Management panel</h1>
-            </div>
-            <div class='btn'>
-                <a href="dashboard.php" class="btn primary_btn">Back</a>
-                <a href="../logout.php" class="btn secondary_btn">Logout</a>
-            </div>
-            <div class="header-actions">
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                    <div class="user-info">
-                        <p>Nurse <?php echo htmlspecialchars($nurse_name); ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
     <main>
         <section class="hero">
             <div class="hero-content">
+                <div class="logo-text">
+                    <h1>SHRS| Nurse Vaccination Management panel</h1>
+                </div>
+
                 <div>
                     <h2>Welcome Nurse, <?php echo htmlspecialchars($nurse_name); ?></h2>
                 </div>

@@ -91,6 +91,9 @@ document.addEventListener('click', function(e) {
         .then(html => {
             content.innerHTML = html;
 
+            if (page.includes('health_record')) {
+                initStudentPage();
+            }
             if (page.includes('dashboard')) initDashboardChart();
             if (page.includes('treatment')) initTreatmentPage();
             if (page.includes('student_list')) {
@@ -292,20 +295,34 @@ studentName.addEventListener("keyup", function(){
 
 });
 
-
 window.addRow = function(){
     let table = document.querySelector("#prescriptionTable tbody");
     let row = document.createElement("tr");
-
     row.innerHTML = `
-    <td><input name="medication[]" class="form-control"></td>
-    <td><input name="prescribed_dosage[]" class="form-control"></td>
-    <td><input name="frequency[]" class="form-control"></td>
-    <td><input type="number" name="quantity[]" class="form-control" required></td>
+    <td>
+        <select name="medication[]" class="form-control" required>
+            <option value="">Select Medication</option>
+        </select>
+    </td>
+    <td><input name="prescribed_dosage[]" class="form-control" required></td>
+    <td><input name="frequency[]" class="form-control" required></td>
+    <td><input type="number" name="quantity[]" class="form-control" min="1" required></td>
     <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Remove</button></td>
     `;
 
     table.appendChild(row);
+    let select = row.querySelector("select");
+    
+    fetch("get_medications.php")
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(med => {
+            let option = document.createElement("option");
+            option.value = med.id; 
+            option.textContent = med.name;
+            select.appendChild(option);
+        });
+    });
 }
 
 window.loadHistory = function(student_id){

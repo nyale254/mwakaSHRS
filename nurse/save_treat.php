@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 $student_id = $_POST['student_id'] ?? '';
+$student_name = $_POST['full_name'] ?? '';
 $symptoms   = mysqli_real_escape_string($conn, $_POST['symptoms'] ?? '');
 $referral   = mysqli_real_escape_string($conn, $_POST['referral'] ?? '');
 $medications = $_POST['medication'] ?? [];
@@ -16,16 +17,16 @@ $dosage      = $_POST['prescribed_dosage'] ?? [];
 $frequency   = $_POST['frequency'] ?? [];
 $quantity    = $_POST['quantity'] ?? [];
 
-if (empty($student_id)) {
-    die("Student ID is required");
+if (empty($student_id) && empty($student_name)) {
+    die("Student ID or Name is required");
 }
 
 mysqli_begin_transaction($conn);
 
 try {
 
-    $query = "INSERT INTO treatments(student_id, symptoms, referral, treatment_date)
-              VALUES('$student_id', '$symptoms', '$referral', NOW())";
+    $query = "INSERT INTO treatments(student_id, symptoms, referral, treatment_date, created_at,full_name)
+              VALUES('$student_id', '$symptoms', '$referral', NOW(), NOW(), '$student_name')";
 
     mysqli_query($conn, $query);
     $treatment_id = mysqli_insert_id($conn);
@@ -37,12 +38,16 @@ try {
         $freq   = mysqli_real_escape_string($conn, $frequency[$i]);
         $qty    = (int)$quantity[$i];
 
-        if ($med_id <= 0 || $qty <= 0) {
-            throw new Exception("Invalid medication or quantity.");
+        if ($med_id <= 0) {
+            throw new Exception("Invalid medication selected.");
+        }
+
+        if ($qty <= 0) {
+            throw new Exception("Quantity must be greater than 0.");
         }
 
         $check = mysqli_query($conn, "SELECT quantity_in_stock, status 
-                                     FROM medication 
+                                     FROM medications 
                                      WHERE id = '$med_id' FOR UPDATE");
 
         if (!$check || mysqli_num_rows($check) == 0) {
@@ -63,12 +68,12 @@ try {
 
         $new_stock = $current_stock - $qty;
 
-        mysqli_query($conn, "UPDATE medication 
+        mysqli_query($conn, "UPDATE medications 
                              SET quantity_in_stock = '$new_stock'
                              WHERE id = '$med_id'");
 
         if ($new_stock == 0) {
-            mysqli_query($conn, "UPDATE medication 
+            mysqli_query($conn, "UPDATE medications 
                                  SET status = 'out_of_stock'
                                  WHERE id = '$med_id'");
         }
@@ -85,6 +90,44 @@ try {
             '$qty'
         )");
     }
+$check_record = mysqli_query($conn, "
+    SELECT record_id 
+    FROM medical_records 
+    WHERE student_id = '$student_id'
+    LIMIT 1
+");
+
+if (mysqli_num_rows($check_record) > 0) {
+
+    $update_medical = "UPDATE medical_records SET
+        complain = '$symptoms',
+        last_updated = NOW()
+    WHERE student_id = '$student_id'";
+
+    if (!mysqli_query($conn, $update_medical)) {
+        throw new Exception("Failed to update medical record: " . mysqli_error($conn));
+    }
+
+} else {
+
+    $insert_medical = "INSERT INTO medical_records(
+        complain,
+        diagnosis,
+        notes,
+        student_id,
+        last_updated
+    ) VALUES(
+        '$symptoms',
+        '',
+        'Initial record created',
+        '$student_id',
+        NOW()
+    )";
+
+    if (!mysqli_query($conn, $insert_medical)) {
+        throw new Exception("Failed to insert medical record: " . mysqli_error($conn));
+    }
+}
 
     $visit_date = date('Y-m-d');
     $visit_time = date('H:i:s');
@@ -98,6 +141,7 @@ try {
         severity,
         diagnosis,
         notes,
+        full_name,
         status,
         created_at
     ) VALUES(
@@ -109,6 +153,7 @@ try {
         '',
         '',
         '',
+        '$student_name',
         'pending',
         NOW()
     )";

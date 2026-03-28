@@ -1,121 +1,30 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 body {
     font-family: "Segoe UI", Roboto, Arial, sans-serif;
     background: #f4f7fb;
     color: #2d3748;
 }
-.topbar {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
-    color: white;
-    padding: 18px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.header-content h1 {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.header-content strong {
-    font-weight: 500;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-avatar svg {
-    width: 20px;
-    height: 20px;
-}
-
-
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    width: 100%;
-    gap: 20px;
-}
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 20px; 
-}
-
-.header-left .btn {
-    display: flex;
-    gap: 10px; 
-}
-
-.header-left .btn a {
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-.btn {
-    text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    gap: 10px;
-}
-
-.primary_btn {
-    background: #2563eb;
-    color: #fff;
-    border: 2px solid #00a8ff;
-}
-
-.primary_btn:hover {
-    background-color: #0097e6;
-    border-color: blue;
-}
-
-.secondary_btn {
-    background-color: red;
-    color: white;
-    border: 2px solid #00a8ff;
-}
-
-.secondary_btn:hover {
-    background-color: rgb(158, 17, 17);
-}
-
-.header-actions {
-    margin-left: auto; 
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
 
 main {
     padding: 30px;
 }
+.logo-text {
+    text-align: center;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.logo-text h1 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -274,12 +183,7 @@ main {
 }
 
 @media (max-width: 600px) {
-    .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
+   
     .header-content h1 {
         font-size: 16px;
     }
