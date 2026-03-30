@@ -15,7 +15,7 @@ h2 {
     color: #2c3e50;
 }
 
-.btn {
+.btn-add {
     display: inline-block;
     margin-bottom: 15px;
     padding: 10px 15px;
@@ -26,7 +26,7 @@ h2 {
     font-size: 14px;
 }
 
-.btn:hover {
+.btn-add:hover {
     background-color: #27ae60;
 }
 

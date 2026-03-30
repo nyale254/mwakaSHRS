@@ -27,33 +27,19 @@ $result = mysqli_stmt_get_result($stmt);
 <head>
     <meta charset="UTF-8">
     <title>Student Management | SHRS</title>
-    <link rel="stylesheet" href="/Mwaka.SHRS.2/styles/student_management.css">
-    <script src="/Mwaka.SHRS.2/scripts/sweetalert2.all.min.js"></script>
+    
 </head>
 <body>
 
-<div class="topbar-admin">
-    <div class="topbar-left">
-        <a href="dashboard.php">Dashboard</a>
-    </div>
-
-    <div class="topbar-center">
-        <a href="add_student.php" class="btn-add">+ Add Student</a>
-    </div>
-
-    <div class="topbar-right">
-        <span class="admin-name">
-            <?= htmlspecialchars($_SESSION['fullname']) ?>
-        </span>
-        <a href="/Mwaka.SHRS.2/logout.php" class="btn-logout">Logout</a>
-    </div>
-</div>
-
 <div class="page-container">
 
-    <h2>Student Management</h2>
+    <h2>Student Management Panel</h2>
 
-    <form method="GET" class="search-form">
+    <div class="topbar-center">
+        <a href="add_student.php" class="btn-add nav-link" data-page="add_student.php">+ Add Student</a>
+    </div>
+
+    <form method="GET" class="search-form" id="studentSearchForm">
         <input type="text" name="search" placeholder="Search by name or reg no"
                value="<?= htmlspecialchars($search) ?>">
         <button type="submit">Search</button>
@@ -83,8 +69,8 @@ $result = mysqli_stmt_get_result($stmt);
             <td><?= htmlspecialchars($row['course']) ?></td>
             <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
             <td class="actions">
-                <a href="view_student.php?id=<?= $row['student_id'] ?>">View</a>
-                <a href="edit_student.php?id=<?= $row['student_id'] ?>">Edit</a>
+                <a href="view_student.php?id=<?= $row['student_id'] ?>" class="view-btn">View</a>
+                <a href="edit_student.php?id=<?= $row['student_id'] ?>" class="edit-btn">Edit</a>
                 <a href="#" 
                 class="danger delete-btn"
                 data-id="<?= $row['student_id'] ?>"
@@ -102,63 +88,5 @@ $result = mysqli_stmt_get_result($stmt);
     </table>
 
 </div>
-<script>
- 
-document.addEventListener("click", function(e) {
-
-    if (e.target.classList.contains("delete-btn")) {
-        e.preventDefault();
-
-        const studentId = e.target.dataset.id;
-        const studentName = e.target.dataset.name;
-        const row = e.target.closest("tr");
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: `You are about to delete ${studentName}. This cannot be undone!`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-
-                fetch(`/Mwaka.SHRS.2/admin/delete.php?id=${studentId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (row) row.remove();
-
-                            Swal.fire({
-                                icon: "success",
-                                title: "Deleted!",
-                                text: data.message || `${studentName} has been deleted.`,
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error!",
-                                text: data.message || "Failed to delete student."
-                            });
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error!",
-                            text: "Delete failed"
-                        });
-                    });
-
-            }
-        });
-    }
-
-});
-</script>
 </body>
 </html>

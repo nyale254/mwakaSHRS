@@ -90,11 +90,6 @@ if (isset($_POST['add_student'])) {
 </head>
 <body>
 
-<div class="topbar-admin">
-    <a href="dashboard.php" class="btn">Dashboard</a>
-    <a href="student_management.php" class="btn">← Back</a>
-    <a href="/Mwaka.SHRS.2/logout.php" class="logout">Logout</a>
-</div>
 
 <div class="form-container">
 
@@ -147,7 +142,7 @@ if (isset($_POST['add_student'])) {
 
         <div class="buttons">
             <button type="submit" name="add_student">Add Student</button>
-            <a href="student_management.php" class="cancel">Cancel</a>
+            <button type="button" id="backBtn" class="btn-back">⬅ Back</button>
         </div>
 
     </form>

@@ -1,37 +1,35 @@
 const links = document.querySelectorAll('.nav-link');
 const content = document.getElementById('main-content');
 
-links.forEach(link => {
+function loadPage(url, addToHistory = true) {
 
-    link.addEventListener('click', function(e){
-        e.preventDefault();
-        links.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-
-        const page = this.getAttribute('data-page');
-
-        fetch(page)
-        .then(response => response.text())
+    fetch(url)
+        .then(res => res.text())
         .then(html => {
             content.innerHTML = html;
-            if(page.includes('dashboard')){
-                initDashboardChart();
-            }
-            if(page.includes('report')){ 
-                initReportChart();
-            }
 
-            if (window.AdminMessages) {
-            AdminMessages.init();
-            }
+            initDynamicContent(url);
 
+            if (addToHistory) {
+                history.pushState({ page: url }, "", url);
+            }
         })
         .catch(err => {
             content.innerHTML = "<p>Error loading page.</p>";
             console.error(err);
         });
-    });
+}
 
+links.forEach(link => {
+    link.addEventListener('click', function(e){
+        e.preventDefault();
+
+        links.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+
+        const page = this.getAttribute('data-page');
+        loadPage(page);
+    });
 });
 function initDashboardChart() {
     const canvas = document.getElementById("trendChart");
@@ -61,14 +59,6 @@ function initDashboardChart() {
     });
 }
 
-const searchBox = document.getElementById("searchBox");
-if(searchBox){
-    searchBox.addEventListener("keyup", function(){
-        let value = this.value.toLowerCase();
-        console.log("Searching:", value);
-    });
-
-}
 initDashboardChart();
 
 
@@ -159,11 +149,35 @@ document.addEventListener("click", function(e){
                 });
 
             }
-
         });
 
     }
+   
+    const viewBtn = e.target.closest(".view-btn");
+    if (viewBtn) {
+        e.preventDefault();
+        const url = viewBtn.getAttribute("href");
+        loadPage(url);
+        initDynamicContent("view_student");
+    }
+
+    const editBtn = e.target.closest(".edit-btn");
+    if (editBtn) {
+        e.preventDefault();
+        const url = editBtn.getAttribute("href");
+        loadPage(url);
+        initDynamicContent("edit_student");
+    }
+
+    const addBtn = e.target.closest(".btn-add");
+    if(addBtn){
+        e.preventDefault();
+        const url = addBtn.getAttribute("href");
+        loadPage(url);
+        initDynamicContent("add_student");}
+
 });
+
 // admin-messages.js
 let adminEventsInitialized = false;
 function initAdminMessages() {
@@ -382,3 +396,212 @@ function escapeHtml(text) {
 window.AdminMessages = {
     init: initAdminMessages
 };
+
+const toggleBtn = document.getElementById("menuToggle");
+const sidebar = document.querySelector(".sidebar");
+
+toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+});
+
+const SearchModule = (() => {
+    let input, container, items;
+
+    function init(config = {}) {
+        const {
+            inputSelector = "#searchBox",
+            containerSelector = "#main-content",
+            itemSelector = ".search-item"
+        } = config;
+
+        input = document.querySelector(inputSelector);
+        container = document.querySelector(containerSelector);
+
+        if (!input || !container) return;
+
+        input.addEventListener("input", handleSearch);
+
+        items = container.querySelectorAll(itemSelector);
+    }
+
+    function handleSearch() {
+        const query = input.value.toLowerCase();
+        items = container.querySelectorAll(".search-item"); 
+
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(query)) {
+                item.style.display = "";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+    function refresh() {
+        items = container.querySelectorAll(".search-item");
+    }
+
+    return { init, refresh };
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+    SearchModule.init();
+});
+
+/*student management page js*/
+
+function initStudentSearch() {
+    const form = document.getElementById("studentSearchForm");
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = "true";
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        loadPage(`/Mwaka.SHRS.2/admin/student_management.php?${params}`);
+        initDynamicContent("students");
+        SearchModule.refresh();
+    });
+}
+
+function initDynamicContent(page) {
+
+    SearchModule.init({
+        inputSelector: "#searchBox",
+        containerSelector: "#main-content",
+        itemSelector: ".search-item"
+    });
+
+    if (page.includes('dashboard')) initDashboardChart();
+    if (page.includes('report')) initReportChart();
+
+    if (window.AdminMessages) {
+        AdminMessages.init();
+    }
+    initStudentSearch();
+    PasswordModule.init(document.getElementById("main-content"));
+}
+
+function initEditForm() {
+    const form = document.getElementById("editStudentForm");
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = "true";
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+
+                Swal.fire("Success", "Student updated", "success");
+
+                fetch("students.php")
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById("main-content").innerHTML = html;
+                        initDynamicContent("students");
+                    });
+
+            } else {
+                Swal.fire("Error", data.message, "error");
+            }
+        });
+    });
+}
+document.addEventListener("click", function (e) {
+    const backBtn = e.target.closest("#backBtn");
+    if (!backBtn) return;
+
+    e.preventDefault();
+
+    if (history.length > 1) {
+        history.back();
+    } else {
+        loadPage("dashboard.php");
+    }
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+    history.replaceState({ page: "dashboard.php" }, "", "dashboard.php");
+    PasswordModule.init();
+});
+
+window.addEventListener("popstate", function(e) {
+    if (e.state && e.state.page) {
+        loadPage(e.state.page, false);
+    }
+});
+
+// student-password.js
+const PasswordModule = (() => {
+
+    function init(container = document) {
+        const password = container.querySelector("#password");
+        const toggle = container.querySelector("#togglePassword");
+        const strength = container.querySelector("#strength");
+
+        if (!password) return; 
+        password.addEventListener("input", () => {
+            checkStrength(password, strength);
+        });
+
+        if (toggle) {
+            toggle.addEventListener("click", () => {
+                const type = password.getAttribute("type") === "password" ? "text" : "password";
+                password.setAttribute("type", type);
+                toggle.textContent = type === "password" ? "👁️" : "🙈";
+            });
+        }
+
+        const form = container.querySelector("form");
+        if (form) {
+            form.addEventListener("submit", (e) => {
+                const confirmed = confirm("Are you sure you want to add this user?");
+                if (!confirmed) e.preventDefault();
+            });
+        }
+    }
+
+    function checkStrength(passwordEl, strengthEl) {
+        if (!strengthEl) return;
+
+        const password = passwordEl.value;
+        let score = 0;
+
+        if (password.length >= 8) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[a-z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+
+        if (password.length === 0) {
+            strengthEl.textContent = "";
+            strengthEl.className = "";
+            return;
+        }
+
+        if (score <= 2) {
+            strengthEl.textContent = "Weak password";
+            strengthEl.className = "weak";
+        } else if (score === 3 || score === 4) {
+            strengthEl.textContent = "Medium strength password";
+            strengthEl.className = "medium";
+        } else {
+            strengthEl.textContent = "Strong password";
+            strengthEl.className = "strong";
+        }
+    }
+
+    return { init };
+
+})();
+
+

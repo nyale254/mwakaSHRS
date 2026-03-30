@@ -131,12 +131,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<div class="topbar-admin">
-    <a href="dashboard.php" class="btn">Dashboard</a>
-    <a href="student_management.php" class="btn">← Back</a>
-    <a href="/Mwaka.SHRS.2/logout.php" class="logout">Logout</a>
-</div>
-
 <div class="form-container">
     <h2>Edit Student</h2>
 
@@ -200,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="buttons">
             <button type="submit" class="btn">Update Student</button>
-            <a href="student_management.php" class="cancel">Cancel</a>
+            <button type="button" id="backBtn">⬅ Back</button>
         </div>
 
     </form>

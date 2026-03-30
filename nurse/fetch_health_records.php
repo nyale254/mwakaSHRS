@@ -19,7 +19,7 @@ if ($student_id) {
     $stmt->bind_param("i", $student_id);
 } elseif ($student_name) {
     $student_name = "%".trim($student_name)."%";
-    $stmt = $conn->prepare("SELECT * FROM health_records WHERE full_name LIKE ? COLLATE utf8_general_ci");
+    $stmt = $conn->prepare("SELECT * FROM health_records WHERE full_name LIKE ? ");
     $stmt->bind_param("s", $student_name);
 } else {
     echo json_encode(["latest" => null, "history" => []]);

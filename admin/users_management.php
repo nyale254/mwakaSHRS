@@ -20,9 +20,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY user_id DESC");
 <body>
 
 <h2>User Management</h2>
-
-<a href="add_user.php" class="btn">+ Add New User</a>
-<a href="javascript:history.back()" class="back-btn">← Back</a>
+<a href="add_user.php" class="btn-add nav-link" data-page="add_user.php">+ Add New User</a>
 
 <table>
     <tr>
@@ -45,13 +43,14 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY user_id DESC");
         <td><?= ucfirst(htmlspecialchars($row['role'])); ?></td>
         <td><?= htmlspecialchars($row['status']); ?></td>
         <td>
-            <a href="edit_user.php?id=<?= $row['user_id']; ?>">Edit</a>
-           <a href="#"
-                class="delete-btn"
-                data-id="<?= $row['user_id']; ?>"
-                data-name="<?= htmlspecialchars($row['username'], ENT_QUOTES); ?>">
-                Delete
-            </a>
+            <a href="edit_user.php?id=<?= $row['user_id'] ?>" class="edit-btn">Edit</a>
+
+            <a href="#"
+                    class="delete-btn"
+                    data-id="<?= $row['user_id']; ?>"
+                    data-name="<?= htmlspecialchars($row['username'], ENT_QUOTES); ?>">
+                    Delete
+                </a>
 
             <a href="disable_user.php?id=<?= $row['user_id']; ?>">Disable</a>
         </td>

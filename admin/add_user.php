@@ -21,6 +21,29 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
         .weak { color: red; }
         .medium { color: orange; }
         .strong { color: green; }
+        .buttons {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-start;
+            width: 200px;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+        }
+
+        .btn:hover {background-color: #2980b9;}
+        .btn-back {
+            background-color: #bdc3c7;
+            color: #2c3e50;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {background-color: #95a5a6;}
     </style>
 
 </head>
@@ -62,58 +85,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
         <option value="active">Active</option>
         <option value="disabled">Disabled</option>
     </select>
-
-    <button type="submit" class="btn">Save User</button>
-    <a href="cancel.php" class="cancel">Cancel</a>
-
+    
+    <div class="buttons">
+        <button type="submit" class="btn">Save User</button>
+        <button type="button" id="backBtn" class="btn-back">⬅ Back</button>
+    </div>
 </form>
-
-<script>
-function checkStrength() {
-    const password = document.getElementById("password").value;
-    const strength = document.getElementById("strength");
-
-    let score = 0;
-
-    if (password.length >= 8) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-
-    if (password.length === 0) {
-        strength.textContent = "";
-        return;
-    }
-
-    if (score <= 2) {
-        strength.textContent = "Weak password";
-        strength.className = "weak";
-    } else if (score === 3 || score === 4) {
-        strength.textContent = "Medium strength password";
-        strength.className = "medium";
-    } else {
-        strength.textContent = "Strong password";
-        strength.className = "strong";
-    }
-}
-
-function confirmSubmit() {
-    return confirm("Are you sure you want to add this user?");
-}
-</script>
-<script>
-
-const toggle = document.getElementById('togglePassword');
-const password = document.getElementById('password');
-
-toggle.addEventListener('click', function() {
-    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-    password.setAttribute('type', type);
-
-    toggle.textContent = type === 'password' ? '👁️' : '🙈';
-});
-</script>
-
 </body>
 </html>

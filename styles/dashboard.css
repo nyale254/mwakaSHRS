@@ -3,11 +3,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 body {
-    display: flex;
     background: #f5f7fb;
     color: #1e293b;
 }
@@ -21,6 +20,8 @@ body {
     left: 0;
     top: 0;
     padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
 }
 
 .logo {
@@ -53,13 +54,11 @@ body {
     color: #2563eb;
 }
 
-/* ================= MAIN CONTENT ================= */
 .main {
     margin-left: 240px;
     width: calc(100% - 240px);
 }
 
-/* ================= TOPBAR ================= */
 .topbar {
     height: 70px;
     background: #ffffff;
@@ -213,24 +212,7 @@ h1 {
     color: #64748b;
 }
 
-@media(max-width: 900px) {
-    .grid-2 {
-        grid-template-columns: 1fr;
-    }
 
-    .topbar {
-        left: 0;
-    }
-
-    .main {
-        margin-left: 0;
-        width: 100%;
-    }
-
-    .sidebar {
-        display: none;
-    }
-}
 .logoutBtn {
     display: flex;
     align-items: center;
@@ -253,4 +235,22 @@ h1 {
 
 .logoutBtn:hover {
     background:#f13535;
+}
+@media(max-width: 900px) {
+    .sidebar {
+        left: -240px; 
+    }
+
+    .sidebar.active {
+        left: 0; 
+    }
+
+    .topbar {
+        left: 0;
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+    }
 }

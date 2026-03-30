@@ -71,7 +71,7 @@ function loadRecord() {
     if (isId) {
         url = `fetch_health_records.php?student_id=${query}`;
     } else {
-        url = `fetch_health_records.php?student_name=${encodeURIComponent(query)}`;
+        url = `fetch_health_records.php?full_name=${encodeURIComponent(query)}`;
     }
 
     fetch(url)

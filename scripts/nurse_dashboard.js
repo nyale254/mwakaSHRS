@@ -30,12 +30,6 @@ function setupSearchObserver() {
     });
 }
 
-/*document.querySelectorAll(".clickable-row").forEach(row => {
-    row.addEventListener("click", () => {
-        const studentId = row.getAttribute("data-id");
-        window.location.href = "view_student.php?id=" + studentId;
-    });
-});*/
 
 function toggleNotifications() {
     const dropdown = document.getElementById("notificationDropdown");

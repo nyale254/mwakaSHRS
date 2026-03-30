@@ -43,9 +43,6 @@ if (!$student) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7fa; margin: 0; padding: 0; }
-        .topbar { display: flex; justify-content: space-between; align-items: center; background: #0077cc; padding: 15px 30px; color: #fff; }
-        .topbar h2 { margin: 0; font-size: 24px; }
-        .topbar a { color: #fff; margin-left: 20px; text-decoration: none; font-weight: 600; }
 
         .container { max-width: 1000px; margin: 30px auto; padding: 20px; }
 
@@ -67,6 +64,8 @@ if (!$student) {
         .btn:hover { background: #005fa3; }
         .btn.secondary { background: #f0f0f0; color: #333; }
         .btn.secondary:hover { background: #e0e0e0; }
+        #backBtn { background: #f0f0f0; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        #backBtn:hover { background: #e0e0e0; }
 
         @media (max-width: 600px) {
             .profile-header { flex-direction: column; text-align: center; }
@@ -74,15 +73,6 @@ if (!$student) {
     </style>
 </head>
 <body>
-
-<div class="topbar">
-    <h2>SHRS</h2>
-    <div>
-        <a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="student_management.php"><i class="fas fa-arrow-left"></i> Back</a>
-        <a href="/Mwaka.SHRS.2/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-</div>
 
 <div class="container">
 
@@ -136,8 +126,8 @@ if (!$student) {
     <?php endif; ?>
 
     <div class="actions">
-        <a href="edit_student.php?id=<?= $student['student_id'] ?>" class="btn"><i class="fas fa-edit"></i> Edit Student</a>
-        <a href="student_management.php" class="btn secondary"><i class="fas fa-list"></i> Back to List</a>
+        <a href="edit_student.php?id=<?= $row['student_id'] ?>" class="edit-btn"><i class="fas fa-edit"></i> Edit Student</a>
+        <button type="button" id="backBtn">⬅ Back</button>
     </div>
 
 </div>
